@@ -1,0 +1,5 @@
+find_package(Cairo REQUIRED)
+find_package(Fontconfig REQUIRED)
+find_package(Freetype REQUIRED)
+find_package(HarfBuzz REQUIRED)
+find_package(ICU REQUIRED COMPONENTS uc i18n)
