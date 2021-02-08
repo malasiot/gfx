@@ -369,8 +369,9 @@ void RenderingContext::setPaint(Element &e)
 
     Paint fill_paint = st.getFillPaint() ;
 
-    if ( fill_paint.type() == PaintType::None ) ;
-    else if ( fill_paint.type() == PaintType::SolidColor ) {
+
+    if ( fill_paint.type() == PaintType::SolidColor ||
+         fill_paint.type() == PaintType::None ) {
         float fill_opacity = st.getFillOpacity() ;
         float opacity = st.getOpacity() ;
         const CSSColor &css_clr = fill_paint.color() ;
