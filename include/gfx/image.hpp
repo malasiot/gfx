@@ -20,6 +20,9 @@ public:
     unsigned stride() const { return stride_; }
 
     ImageFormat format() const { return format_ ; }
+    uint32_t sampleSize() const ;
+
+    Image crop(uint32_t x0, uint32_t y0, uint32_t w, uint32_t h) const ;
 
     bool saveToPNG(const std::string &fileName) ;
     bool saveToPNGBuffer(std::string &data);

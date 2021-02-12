@@ -11,6 +11,8 @@ protected:
         width_(w), height_(h) {}
 public:
 
+    void ref() const ;
+
     ~Surface() ;
 
     virtual void flush() ;

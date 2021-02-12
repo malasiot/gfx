@@ -6,6 +6,11 @@ using namespace std ;
 
 namespace gfx {
 
+void Surface::ref() const
+{
+    cairo_surface_reference(surf_) ;
+}
+
 Surface::~Surface(){
     flush() ;
 
@@ -32,13 +37,6 @@ void Surface::clip(const Surface &other)
 
 ImageSurface::ImageSurface(int w, int h, double dpix, double dpiy): Surface(w, h, dpix, dpiy)  {
     surf_ = cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h) ;
-
-    // this is needed to work with transparency
-    cairo_t *cr2 = cairo_create (surf_);
-    cairo_set_operator (cr2, CAIRO_OPERATOR_SOURCE);
-    cairo_set_source_rgba (cr2, 0, 0, 0, 1);
-    cairo_paint (cr2);
-    cairo_destroy (cr2);
 }
 
 

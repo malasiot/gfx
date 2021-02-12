@@ -17,7 +17,7 @@ void drawShape(Canvas &canvas, const Rectangle2d &rect) {
 }
 
 int main(int argc, char *argv[]) {
-
+/*
     ImageSurface ms(400, 400) ;
     Canvas mask(ms) ;
 
@@ -27,12 +27,12 @@ int main(int argc, char *argv[]) {
 
     ms.flush() ;
     ms.getImage().saveToPNG("/tmp/mask.png") ;
-
+*/
     ImageSurface is(1024, 512) ;
     Canvas canvas(is) ;
 
 
-    canvas.fill(NamedColor::white()) ;
+ //   canvas.fill(NamedColor::white()) ;
 
     canvas.clearPen() ;
     canvas.setBrush(SolidBrush(NamedColor::blue())) ;
@@ -84,20 +84,12 @@ int main(int argc, char *argv[]) {
 
     canvas.restore() ;
 
-    Path path ;
-    path.moveTo(10, 10) ;
-    path.lineTo(200, 100) ;
-    path.lineTo(300, 200) ;
-
-    canvas.setPen(Pen({0, 0, 0}, 4)) ;
-    canvas.clearBrush() ;
-
-    canvas.drawPath(path) ;
-
-    canvas.setPen(Pen({1, 0, 0}, 2.5)) ;
 
 
-    canvas.drawPath(path) ;
+    Image xim = Image::loadPNG("/home/malasiot/Downloads/image.png");
+
+    canvas.drawImage(xim, 0.5) ;
+
 
     is.flush() ;
 

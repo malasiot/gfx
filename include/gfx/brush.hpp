@@ -138,7 +138,11 @@ class PatternBrush: public Brush {
 
 public:
 
-    PatternBrush(const std::shared_ptr<Surface> &pattern):  pattern_(pattern), sm_(SpreadMethod::Pad)  {}
+    PatternBrush(const Surface &pattern):  pattern_(pattern), sm_(SpreadMethod::Pad)  {}
+
+    PatternBrush(const PatternBrush &other): pattern_(other.pattern_), sm_(other.sm_), tr_(other.tr_) {
+        pattern_.ref() ;
+    }
 
     Brush *clone() const override {
         return new PatternBrush(*this) ;
@@ -148,13 +152,13 @@ public:
     void setSpread(SpreadMethod method) { sm_ = method ; }
 
     Matrix2d transform() const { return tr_ ; }
-    const Surface *pattern() const { return pattern_.get() ; }
+    const Surface *pattern() const { return &pattern_ ; }
     SpreadMethod spread() const { return sm_ ; }
 
 private:
 
     SpreadMethod sm_ ;
-    std::shared_ptr<Surface> pattern_ ;
+    const Surface & pattern_ ;
     Matrix2d tr_ ;
 } ;
 

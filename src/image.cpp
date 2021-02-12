@@ -218,16 +218,25 @@ Image Image::png_read(R &reader) {
 
     if (color_type & PNG_COLOR_TYPE_GRAY && bit_depth < 8) png_set_gray_1_2_4_to_8(png_ptr);
 
-    if ( png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) png_set_tRNS_to_alpha(png_ptr);
+    if ( png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS))
+        png_set_tRNS_to_alpha(png_ptr);
 
     if ( bit_depth < 8 ) png_set_packing(png_ptr);
 
     if ( color_type == PNG_COLOR_TYPE_RGB_ALPHA )  png_set_swap_alpha(png_ptr);
 
-    if ( color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA)
+    if ( color_type == PNG_COLOR_TYPE_GRAY || color_type == PNG_COLOR_TYPE_GRAY_ALPHA) {
              png_set_gray_to_rgb(png_ptr);
 
-    ImageFormat fmt = ( color_type & PNG_COLOR_MASK_ALPHA ) ? ImageFormat::ARGB32 : ImageFormat::RGB24 ;
+    }
+
+    // Update our info now.
+       png_read_update_info(png_ptr, info_ptr);
+       int channels = png_get_channels(png_ptr, info_ptr);
+
+
+
+    ImageFormat fmt = ( channels == 4 ) ? ImageFormat::ARGB32 : ImageFormat::RGB24 ;
 
     Image res(width, height, fmt) ;
 
@@ -295,6 +304,34 @@ Image::Image(unsigned int width, unsigned int height, ImageFormat fmt): width_(w
     }
 
     pixels_.reset(new char [height_ * stride_]) ;
+}
+
+uint32_t Image::sampleSize() const {
+    switch( format_) {
+    case ImageFormat::RGB24:
+        return 3 ;
+    case ImageFormat::ARGB32:
+        return 4 ;
+    }
+}
+
+Image Image::crop(uint32_t x0, uint32_t y0, uint32_t w, uint32_t h) const
+{
+
+    Image out(w, h, format()) ;
+
+    w = std::min(x0 + w, width()) - x0 ;
+    h = std::min(y0 + h, height()) - y0 ;
+
+    const char *sp = pixels() + y0 * stride() + x0 * sampleSize() ;
+    char *dp = out.pixels() ;
+    for( uint i=0 ; i<h ; i++ ) {
+        std::copy(sp, sp + w * sampleSize(), dp) ;
+        sp += stride() ;
+        dp += out.stride() ;
+    }
+
+    return out ;
 }
 
 

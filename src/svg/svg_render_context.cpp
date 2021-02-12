@@ -275,9 +275,9 @@ void RenderingContext::setPatternBrush(PatternElement &e, float a)
 
     // create a new canvas to draw pattern on
 
-    RecordingSurface *ps = new RecordingSurface(tile_w, tile_h) ;
+    RecordingSurface ps(tile_w, tile_h) ;
 
-    Canvas pattern(*ps) ;
+    Canvas pattern(ps) ;
 
     // recursively render children of the element into this canvas
     RenderingContext pctx(pattern, tile_w, tile_h) ;
@@ -293,8 +293,7 @@ void RenderingContext::setPatternBrush(PatternElement &e, float a)
     pattern_transform.translate(tile_x, tile_y);
     pattern_transform.postmult(trans);
 
-    auto surface = std::shared_ptr<Surface>(ps);
-    PatternBrush brush(surface) ;
+    PatternBrush brush(ps) ;
     brush.setTransform(pattern_transform) ;
     brush.setSpread(SpreadMethod::Repeat) ;
 

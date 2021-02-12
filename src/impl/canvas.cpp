@@ -140,6 +140,8 @@ void RenderingContext::cairo_apply_pattern(const PatternBrush &pat) {
 
     const Surface *c = pat.pattern() ;
 
+    cairo_surface_mark_dirty(c->surf_) ;
+    cairo_surface_flush(c->surf_) ;
     cairo_pattern_t *pattern = cairo_pattern_create_for_surface (c->surf_);
 
     if ( pat.spread() == SpreadMethod::Reflect )
@@ -293,7 +295,7 @@ cairo_surface_t *cairo_create_image_surface(const Image &im)
                 char blue =  sp[2]  ;
                 char alpha = 255 ;
 
-                dp[0] = alpha ; dp[1] = red ; dp[2] = green ;dp[3] = blue ;
+                dp[3] = alpha ; dp[2] = red ; dp[1] = green ;dp[0] = blue ;
 
                 dp += 4 ;
                 sp += 3 ;
@@ -316,7 +318,7 @@ cairo_surface_t *cairo_create_image_surface(const Image &im)
                 char green = sp[2] ;
                 char blue =  sp[3] ;
 
-                dp[0] = alpha ; dp[1] = red ; dp[2] = green ; dp[3] = blue ;
+                dp[3] = alpha ; dp[2] = red ; dp[1] = green ; dp[0] = blue ;
 
                 dp += 4 ;
                 sp += 4 ;
@@ -326,6 +328,8 @@ cairo_surface_t *cairo_create_image_surface(const Image &im)
             srp += src_stride ;
         }
     }
+
+    cairo_surface_mark_dirty(psurf) ;
 
     return psurf ;
 }
@@ -805,9 +809,14 @@ void Canvas::drawImage(const Image &im,  double opacity )
 
     cairo_set_source_surface(cr(), (cairo_surface_t *)imsurf, 0, 0);
 
+    cairo_pattern_set_filter (cairo_get_source (cr()), CAIRO_FILTER_BILINEAR);
+    cairo_pattern_set_extend( cairo_get_source( cr()), CAIRO_EXTEND_PAD ) ;
+
     cairo_paint_with_alpha (cr(), opacity);
 
     cairo_surface_destroy(imsurf) ;
+
+    cairo_restore(cr()) ;
 }
 
 
@@ -824,8 +833,6 @@ void Canvas::setAntialias(bool anti_alias)
 {
     if ( anti_alias ) {
         cairo_set_antialias (cr(), CAIRO_ANTIALIAS_BEST);
-
-
     }
     else
         cairo_set_antialias (cr(), CAIRO_ANTIALIAS_DEFAULT);
