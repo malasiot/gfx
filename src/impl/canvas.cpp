@@ -138,31 +138,10 @@ void RenderingContext::cairo_apply_radial_gradient(const RadialGradientBrush &rg
 
 void RenderingContext::cairo_apply_pattern(const PatternBrush &pat) {
 
-    const Surface *c = pat.pattern() ;
+    cairo_pattern_t *pattern = pat.handle();
 
-    cairo_surface_mark_dirty(c->surf_) ;
-    cairo_surface_flush(c->surf_) ;
-    cairo_pattern_t *pattern = cairo_pattern_create_for_surface (c->surf_);
-
-    if ( pat.spread() == SpreadMethod::Reflect )
-        cairo_pattern_set_extend (pattern, CAIRO_EXTEND_REFLECT);
-    else if ( pat.spread() == SpreadMethod::Repeat )
-        cairo_pattern_set_extend (pattern, CAIRO_EXTEND_REPEAT);
-    else
-        cairo_pattern_set_extend (pattern, CAIRO_EXTEND_PAD);
-
-    cairo_matrix_t matrix;
-
-    Matrix2d tr = pat.transform() ;
-    cairo_matrix_init (&matrix, tr.m1(), tr.m2(), tr.m3(), tr.m4(), tr.m5(), tr.m6());
-    cairo_matrix_invert (&matrix);
-    cairo_pattern_set_matrix (pattern, &matrix);
-
-    cairo_pattern_set_filter (pattern, CAIRO_FILTER_BEST); //?
 
     cairo_set_source (cr(), pattern);
-
-    cairo_pattern_destroy (pattern);
 }
 
 void RenderingContext::fill_stroke_shape() {
@@ -369,6 +348,9 @@ void Canvas::save() {
 }
 
 void Canvas::restore() 	{
+    if ( state_.empty() )
+        throw runtime_error("restore called out of line") ;
+
     cairo_restore(cr()) ;
     state_.pop() ;
 }
@@ -796,7 +778,7 @@ Canvas::~Canvas()
 }
 
 Canvas::Canvas(Surface &surface): RenderingContext(), surface_(surface) {
-    cr_ = cairo_create(surface.surf_) ;
+    cr_ = cairo_create(surface.handle()) ;
     state_.emplace() ;
 }
 
@@ -844,5 +826,32 @@ PatternCanvas::PatternCanvas(double width, double height): Canvas(width, height,
     source_cr_ = cairo_create(surf_) ;
 }
 */
+
+PatternBrush::PatternBrush(const Surface &surf): surf_(surf) {
+    pattern_.reset(cairo_pattern_create_for_surface(surf.handle()),
+                   [](cairo_pattern_t *p)
+    { cairo_pattern_destroy(p); }) ;
+
+   cairo_pattern_set_filter (pattern_.get(), CAIRO_FILTER_BEST); //?
+}
+
+void PatternBrush::setSpread(SpreadMethod method) {
+
+    if ( method == SpreadMethod::Reflect )
+        cairo_pattern_set_extend (pattern_.get(), CAIRO_EXTEND_REFLECT);
+    else if ( method == SpreadMethod::Repeat )
+        cairo_pattern_set_extend (pattern_.get(), CAIRO_EXTEND_REPEAT);
+    else
+        cairo_pattern_set_extend (pattern_.get(), CAIRO_EXTEND_PAD);
+}
+
+
+void PatternBrush::setTransform(const Matrix2d &tr) {
+    cairo_matrix_t matrix;
+
+    cairo_matrix_init (&matrix, tr.m1(), tr.m2(), tr.m3(), tr.m4(), tr.m5(), tr.m6());
+    cairo_matrix_invert (&matrix);
+    cairo_pattern_set_matrix (pattern_.get(), &matrix);
+}
 
 }

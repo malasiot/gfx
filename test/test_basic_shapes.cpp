@@ -47,7 +47,7 @@ int main(int argc, char *argv[]) {
 
     Path clipPath ;
 
-    clipPath.addRect(0, 0, 1024, 512) ;
+    clipPath.addRect(0, 0, 512, 512) ;
     clipPath.addArc(100, 100, 50, 50, 0, 360) ;
     clipPath.closePath() ;
 
@@ -86,9 +86,9 @@ int main(int argc, char *argv[]) {
 
 
 
-    Image xim = Image::loadPNG("/home/malasiot/Downloads/image.png");
+  //  Image xim = Image::loadPNG("/home/malasiot/Downloads/image.png");
 
-    canvas.drawImage(xim, 0.5) ;
+  //  canvas.drawImage(xim, 0.5) ;
 
 
     is.flush() ;

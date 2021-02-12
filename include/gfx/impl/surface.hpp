@@ -10,8 +10,15 @@ namespace detail {
 
 class Surface {
 public:
+    cairo_surface_t *handle() const { return surf_.get() ; }
 
-    cairo_surface_t *surf_ = nullptr ;
+protected:
+
+    Surface(): surf_(nullptr, &cairo_surface_destroy) {}
+
+    using surface_handle = std::shared_ptr<cairo_surface_t> ;
+
+    surface_handle surf_  ;
     double dpix_, dpiy_ ;
 };
 

@@ -11,8 +11,6 @@ protected:
         width_(w), height_(h) {}
 public:
 
-    void ref() const ;
-
     ~Surface() ;
 
     virtual void flush() ;
@@ -44,6 +42,7 @@ class RecordingSurface: public Surface {
 public:
     RecordingSurface(double width, double height) ;
 };
+
 
 }
 

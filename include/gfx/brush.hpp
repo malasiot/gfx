@@ -8,6 +8,7 @@
 #include <vector>
 #include <memory>
 
+
 namespace gfx {
 
 enum class FillRule { EvenOdd, NonZero } ;
@@ -138,28 +139,20 @@ class PatternBrush: public Brush {
 
 public:
 
-    PatternBrush(const Surface &pattern):  pattern_(pattern), sm_(SpreadMethod::Pad)  {}
-
-    PatternBrush(const PatternBrush &other): pattern_(other.pattern_), sm_(other.sm_), tr_(other.tr_) {
-        pattern_.ref() ;
-    }
+    PatternBrush(const Surface &surf) ;
 
     Brush *clone() const override {
         return new PatternBrush(*this) ;
     }
 
-    void setTransform(const Matrix2d &trans) { tr_ = trans ; }
-    void setSpread(SpreadMethod method) { sm_ = method ; }
+    cairo_pattern_t *handle() const { return pattern_.get() ; }
 
-    Matrix2d transform() const { return tr_ ; }
-    const Surface *pattern() const { return &pattern_ ; }
-    SpreadMethod spread() const { return sm_ ; }
+    void setTransform(const Matrix2d &trans) ;
+    void setSpread(SpreadMethod method) ;
 
 private:
-
-    SpreadMethod sm_ ;
-    const Surface & pattern_ ;
-    Matrix2d tr_ ;
+    std::shared_ptr<cairo_pattern_t> pattern_ ;
+    Surface surf_ ;
 } ;
 
 }
