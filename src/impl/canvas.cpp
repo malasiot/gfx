@@ -1,5 +1,6 @@
 #include <gfx/impl/canvas.hpp>
 #include <gfx/canvas.hpp>
+#include <gfx/exception.hpp>
 
 #include <cairo/cairo.h>
 #include <cassert>
@@ -140,6 +141,7 @@ void RenderingContext::cairo_apply_pattern(const PatternBrush &pat) {
 
     cairo_pattern_t *pattern = pat.handle();
 
+    detail::throw_exception_on_cairo_status(cairo_pattern_status(pattern)) ;
 
     cairo_set_source (cr(), pattern);
 }
@@ -205,6 +207,7 @@ void RenderingContext::polyline_path(double *pts, int n, bool close) {
 }
 
 cairo_t *RenderingContext::cr() {
+    detail::throw_exception_on_cairo_status(cairo_status(cr_)) ;
     return cr_ ;
 }
 
@@ -819,21 +822,20 @@ void Canvas::setAntialias(bool anti_alias)
     else
         cairo_set_antialias (cr(), CAIRO_ANTIALIAS_DEFAULT);
 }
-/*
-PatternCanvas::PatternCanvas(double width, double height): Canvas(width, height, 92, 92) {
-    cairo_rectangle_t r{0, 0, width, height} ;
-    surf_ = cairo_recording_surface_create(CAIRO_CONTENT_COLOR_ALPHA, &r) ;
-    source_cr_ = cairo_create(surf_) ;
-}
-*/
+
 
 PatternBrush::PatternBrush(const Surface &surf): surf_(surf) {
     pattern_.reset(cairo_pattern_create_for_surface(surf.handle()),
                    [](cairo_pattern_t *p)
     { cairo_pattern_destroy(p); }) ;
 
+   detail::throw_exception_on_cairo_status(cairo_pattern_status(pattern_.get())) ;
+
    cairo_pattern_set_filter (pattern_.get(), CAIRO_FILTER_BEST); //?
+
+
 }
+
 
 void PatternBrush::setSpread(SpreadMethod method) {
 
@@ -843,6 +845,9 @@ void PatternBrush::setSpread(SpreadMethod method) {
         cairo_pattern_set_extend (pattern_.get(), CAIRO_EXTEND_REPEAT);
     else
         cairo_pattern_set_extend (pattern_.get(), CAIRO_EXTEND_PAD);
+
+    detail::throw_exception_on_cairo_status(cairo_pattern_status(pattern_.get())) ;
+
 }
 
 
@@ -852,6 +857,9 @@ void PatternBrush::setTransform(const Matrix2d &tr) {
     cairo_matrix_init (&matrix, tr.m1(), tr.m2(), tr.m3(), tr.m4(), tr.m5(), tr.m6());
     cairo_matrix_invert (&matrix);
     cairo_pattern_set_matrix (pattern_.get(), &matrix);
+
+    detail::throw_exception_on_cairo_status(cairo_pattern_status(pattern_.get())) ;
+
 }
 
 }

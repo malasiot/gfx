@@ -15,6 +15,8 @@ set(LIB_SOURCES
     impl/scrptrun.cpp
     impl/text_path.cpp
     impl/surface.cpp
+    impl/exception.cpp
+
     svg/svg_parser.cpp
     svg/svg_parser.hpp
     svg/svg_document.cpp

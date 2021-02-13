@@ -13,6 +13,7 @@ class Surface {
 public:
     cairo_surface_t *handle() const { return surf_.get() ; }
 
+    void finish() { cairo_surface_finish(surf_.get()) ; }
 protected:
 
     Surface(): surf_(nullptr, &cairo_surface_destroy) {}

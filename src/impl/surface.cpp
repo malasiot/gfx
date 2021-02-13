@@ -1,6 +1,7 @@
 #include <gfx/surface.hpp>
 #include <gfx/impl/canvas.hpp>
 #include <cairo-pdf.h>
+#include <gfx/exception.hpp>
 
 using namespace std ;
 
@@ -31,12 +32,14 @@ void Surface::clip(const Surface &other)
 ImageSurface::ImageSurface(int w, int h, double dpix, double dpiy):
     Surface(w, h, dpix, dpiy)  {
     surf_.reset( cairo_image_surface_create(CAIRO_FORMAT_ARGB32, w, h), &cairo_surface_destroy) ;
+    detail::throw_exception_on_cairo_status(cairo_surface_status(surf_.get())) ;
 }
 
 
 RecordingSurface::RecordingSurface(double width, double height): Surface(width, height, 96, 96) {
     cairo_rectangle_t r{0, 0, width, height} ;
     surf_.reset(cairo_recording_surface_create(CAIRO_CONTENT_COLOR_ALPHA, &r), &cairo_surface_destroy);
+    detail::throw_exception_on_cairo_status(cairo_surface_status(surf_.get())) ;
 }
 
 Image ImageSurface::getImage() const
@@ -73,6 +76,7 @@ Image ImageSurface::getImage() const
 
 PDFSurface::PDFSurface(const string &fileName, int w, int h, double dpi_x, double dpi_y): Surface(w, h, dpi_x, dpi_y) {
     surf_.reset( cairo_pdf_surface_create(fileName.c_str(), w , h),&cairo_surface_destroy ) ;
+    detail::throw_exception_on_cairo_status(cairo_surface_status(surf_.get())) ;
 }
 
 }
