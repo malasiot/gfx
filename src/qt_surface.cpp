@@ -1,6 +1,5 @@
-#include <cvx/gfx/qt_surface.hpp>
+#include <gfx/qt_surface.hpp>
 
-namespace cvx {
 namespace gfx {
 
 QtSurface::QtSurface(QPainter *p):
@@ -13,11 +12,11 @@ QtSurface::QtSurface(QPainter *p):
 void QtSurface::flush() {
     ImageSurface::flush() ;
 
-    uchar *src = (uchar *)cairo_image_surface_get_data(surf_) ;
-    unsigned width = cairo_image_surface_get_width(surf_) ;
-    unsigned height = cairo_image_surface_get_height(surf_) ;
-    unsigned src_stride = cairo_image_surface_get_stride(surf_) ;
-    cairo_format_t src_format = cairo_image_surface_get_format(surf_) ;
+    uchar *src = (uchar *)cairo_image_surface_get_data(surf_.get()) ;
+    unsigned width = cairo_image_surface_get_width(surf_.get()) ;
+    unsigned height = cairo_image_surface_get_height(surf_.get()) ;
+    unsigned src_stride = cairo_image_surface_get_stride(surf_.get()) ;
+    cairo_format_t src_format = cairo_image_surface_get_format(surf_.get()) ;
 
     QImage image(width, height, QImage::Format_ARGB32) ;
 
@@ -41,6 +40,4 @@ void QtSurface::flush() {
 }
 
 
-
-}
 }

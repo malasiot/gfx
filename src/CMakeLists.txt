@@ -63,13 +63,11 @@ set(LIB_SOURCES
     ${LIBRARY_INCLUDE_DIR}/graph.hpp
     ${LIBRARY_INCLUDE_DIR}/line_graph.hpp
     ${LIBRARY_INCLUDE_DIR}/line_plot.hpp
-
-
-
-
-
-
 )
+
+IF ( BUILD_GFX_QT_SURFACE )
+LIST(APPEND LIB_SOURCES qt_surface.cpp)
+ENDIF()
 
 add_library(gfx ${LIBRARY_TYPE} ${LIB_SOURCES} )
 
@@ -94,6 +92,7 @@ target_link_libraries(gfx
     ${FONTCONFIG_LIBRARIES}
     ${FREETYPE_LIBRARIES}
     ${ICU_LIBRARIES}
+    ${QT_LIBRARIES}
 )
 
 # Install library
