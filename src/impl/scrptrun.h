@@ -35,7 +35,7 @@ struct ParenStackEntry
     UScriptCode scriptCode;
 };
 
-class ScriptRun : public UObject {
+class ScriptRun : public icu::UObject {
 public:
     ScriptRun();
 

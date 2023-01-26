@@ -39,11 +39,11 @@ struct State {
      TextDecoration text_decoration_ ;
 };
 
-class RenderingContext {
+class CanvasImpl {
 public:
 
-    RenderingContext() ;
-    ~RenderingContext() ;
+    CanvasImpl() ;
+    ~CanvasImpl() ;
 
     cairo_t *cr_ = nullptr;
     std::stack<State> state_ ;

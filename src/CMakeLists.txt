@@ -35,6 +35,13 @@ set(LIB_SOURCES
     svg/base64.cpp
     svg/base64.hpp
 
+    plot/plot.cpp
+    plot/axis.cpp
+    plot/tics.cpp
+    plot/legend.cpp
+    plot/line_graph.cpp
+    plot/markers.cpp
+
     ${LIBRARY_INCLUDE_DIR}/impl/canvas.hpp
     ${LIBRARY_INCLUDE_DIR}/font.hpp
     ${LIBRARY_INCLUDE_DIR}/pen.hpp
@@ -48,6 +55,20 @@ set(LIB_SOURCES
     ${LIBRARY_INCLUDE_DIR}/text_layout.hpp
     ${LIBRARY_INCLUDE_DIR}/glyph.hpp
     ${LIBRARY_INCLUDE_DIR}/svg_document.hpp
+
+    ${LIBRARY_INCLUDE_DIR}/plot.hpp
+    ${LIBRARY_INCLUDE_DIR}/axis.hpp
+    ${LIBRARY_INCLUDE_DIR}/tics.hpp
+    ${LIBRARY_INCLUDE_DIR}/legend.hpp
+    ${LIBRARY_INCLUDE_DIR}/graph.hpp
+    ${LIBRARY_INCLUDE_DIR}/line_graph.hpp
+    ${LIBRARY_INCLUDE_DIR}/line_plot.hpp
+
+
+
+
+
+
 )
 
 add_library(gfx ${LIBRARY_TYPE} ${LIB_SOURCES} )

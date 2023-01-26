@@ -1,16 +1,18 @@
-#include <cvx/gfx/plot/axis.hpp>
-#include <cvx/gfx/canvas.hpp>
-#include <cvx/util/misc/format.hpp>
+#include <gfx/axis.hpp>
+#include <gfx/canvas.hpp>
+//#include <cvx/util/misc/format.hpp>
 
 using namespace std ;
-namespace cvx { namespace gfx {
+
+namespace gfx {
 
 TickFormatter Axis::nullFormatter =
            [](double v, int idx) { return std::string() ; } ;
 
 TickFormatter Axis::defaultFormatter =
            [](double v, int idx) {
-              return cvx::util::format("%.2g", v) ;
+    return "" ;
+            //  return cvx::util::format("%.2g", v) ;
     };
 
 
@@ -164,7 +166,7 @@ Rectangle2d Axis::paintLabel(Canvas &canvas,  const string &text, double x, doub
 
     canvas.save() ;
     canvas.setBrush(text_brush_) ;
-    canvas.setPen(EmptyPen()) ;
+    canvas.clearPen() ;
     canvas.setFont(label_font_) ;
     canvas.setTextAlign(TextAlignBottom|TextAlignLeft) ;
     canvas.drawText(layout_mnt, layout_rect) ;
@@ -253,7 +255,7 @@ void XAxis::draw(Canvas &canvas, double wsize, double hsize, double gscale) {
         canvas.save() ;
         canvas.setFont(title_font_) ;
         canvas.setBrush(text_brush_) ;
-        canvas.setPen(EmptyPen()) ;
+        canvas.clearPen() ;
         canvas.drawText(title_, boundRect) ;
         canvas.restore() ;
     }
@@ -339,7 +341,7 @@ void YAxis::draw(Canvas &canvas, double wsize, double hsize, double gscale) {
 
         canvas.setFont(title_font_) ;
         canvas.setBrush(text_brush_) ;
-        canvas.setPen(EmptyPen()) ;
+        canvas.clearPen() ;
         canvas.drawText(title_, boundRect) ;
         canvas.restore() ;
 
@@ -367,4 +369,4 @@ double YAxis::transform(double y) {
 
 
 
-}}
+}

@@ -1,10 +1,10 @@
-#include <cvx/gfx/plot/markers.hpp>
+#include <gfx/markers.hpp>
 
 using namespace std ;
 
-namespace cvx { namespace gfx {
+namespace gfx {
 
-void SimpleShapeMarker::draw(cvx::gfx::Canvas &c, uint)
+void SimpleShapeMarker::draw(Canvas &c, uint)
 {
     if ( shape_ == None ) return ;
 
@@ -65,8 +65,12 @@ void SimpleShapeMarker::draw(cvx::gfx::Canvas &c, uint)
        }
 
     c.save() ;
-    c.setPen(*pen_) ;
-    c.setBrush(*brush_) ;
+    if ( pen_ ) c.setPen(*pen_) ;
+    else c.clearPen();
+
+    if ( brush_ ) c.setBrush(*brush_) ;
+    else c.clearBrush();
+
     c.drawPath(p) ;
     c.restore() ;
 
@@ -83,4 +87,4 @@ void AdaptiveCircleMarker::draw(Canvas &c, uint idx)
 
 }
 
-}}
+}

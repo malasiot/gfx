@@ -1,10 +1,10 @@
-#ifndef CVX_GFX_BBOX_HPP
-#define CVX_GFX_BBOX_HPP
+#ifndef GFX_BBOX_HPP
+#define GFX_BBOX_HPP
 
 #include <limits>
 #include <algorithm>
 
-namespace cvx { namespace gfx {
+namespace gfx {
 
 class BoundingBox {
 public:
@@ -38,6 +38,6 @@ private:
 } ;
 
 
-} }
+}
 
 #endif

@@ -1,9 +1,10 @@
-#include <cvx/gfx/plot/line_graph.hpp>
-#include <cvx/gfx/plot/plot.hpp>
-#include <cvx/gfx/plot/markers.hpp>
+#include <gfx/line_graph.hpp>
+#include <gfx/plot.hpp>
+#include <gfx/markers.hpp>
 
 using namespace std ;
-namespace cvx { namespace gfx {
+
+namespace gfx {
 
 LineGraph::LineGraph(const vector<double> &x, const vector<double> &y, const char *ps): x_(x), y_(y) {
     assert(x.size() == y.size()) ;
@@ -31,10 +32,9 @@ void LineGraph::draw(Canvas &c)
     auto &xaxis = plot_->xAxis() ;
     auto &yaxis = plot_->yAxis() ;
 
-
     // Fill area below graph
 
-    if ( dynamic_cast<EmptyBrush *>(brush_.get()) == nullptr ) {
+    if ( brush_ ) {
 
         Path p ;
 
@@ -55,7 +55,7 @@ void LineGraph::draw(Canvas &c)
 
         c.save() ;
         c.setBrush(*brush_) ;
-        c.setPen(EmptyPen());
+        c.clearPen();
         c.drawPath(p) ;
         c.restore() ;
 
@@ -120,8 +120,11 @@ void LineGraph::drawLegend(Canvas &c, double width, double height)
     double lh = height/2 ;
 
     c.save() ;
-    c.setPen(EmptyPen()) ;
-    c.setBrush(*brush_);
+    c.clearPen() ;
+
+    if ( brush_ ) c.setBrush(*brush_);
+    else c.clearBrush();
+
     c.drawRect(0, height/2, width, lh/2) ;
     c.restore() ;
 
@@ -188,7 +191,7 @@ void LineGraph::parseParamString(const char *src) {
     default:   shape = SimpleShapeMarker::None ; break ;
     }
 
-    setMarker(new SimpleShapeMarker(shape, 6, Pen(), SolidBrush(NamedColor::white()))) ;
+    setMarker(new SimpleShapeMarker(shape, 6, nullptr, new SolidBrush(NamedColor::white()))) ;
 
     pen_.setColor(clr) ;
 
@@ -211,7 +214,4 @@ void LineGraph::parseParamString(const char *src) {
 }
 
 
-
-
-
-}}
+}

@@ -1,9 +1,9 @@
-#include <cvx/gfx/plot/tics.hpp>
+#include <gfx/tics.hpp>
 #include <cmath>
 
 using namespace std ;
 
-namespace cvx { namespace gfx {
+namespace gfx {
 
 double AutoTickLocator::sround(double x) {
     double s = 1.0 ;
@@ -91,4 +91,4 @@ void FixedTickLocator::compute(double vmin, double vmax, uint maxTics, double mi
 
 
 
-}}
+}

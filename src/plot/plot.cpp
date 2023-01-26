@@ -1,8 +1,8 @@
-#include <cvx/gfx/plot/plot.hpp>
+#include <gfx/plot.hpp>
 
 using namespace std ;
 
-namespace cvx { namespace gfx {
+namespace gfx {
 
 void Plot::draw(Canvas &c, double w, double h)
 {
@@ -41,4 +41,4 @@ void Plot::draw(Canvas &c, double w, double h)
 
 }
 
-}}
+}

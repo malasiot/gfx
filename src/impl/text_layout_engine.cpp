@@ -130,12 +130,12 @@ public:
 
     ICUBreakIterator() {
         UErrorCode status = U_ZERO_ERROR;
-        breakitr_.reset(BreakIterator::createLineInstance(Locale::getUS(), status));
+        breakitr_.reset(icu::BreakIterator::createLineInstance(icu::Locale::getUS(), status));
     }
 
-    std::unique_ptr<BreakIterator> breakitr_ ;
+    std::unique_ptr<icu::BreakIterator> breakitr_ ;
 
-    BreakIterator *iterator() {
+    icu::BreakIterator *iterator() {
         return breakitr_.get() ;
     }
 
@@ -152,7 +152,7 @@ void TextLayoutEngine::breakLine(int32_t start, int32_t end) {
         return ;
     }
 
-    BreakIterator *breakitr = ICUBreakIterator::instance().iterator() ;
+    icu::BreakIterator *breakitr = ICUBreakIterator::instance().iterator() ;
 
     if ( !breakitr ) {
         addLine(std::move(line));
@@ -173,9 +173,9 @@ void TextLayoutEngine::breakLine(int32_t start, int32_t end) {
 
         int break_position = wrap_before_ ? breakitr->preceding(i + 1) : breakitr->following(i);
 
-        if ( break_position <= last_break_position || break_position == static_cast<int>(BreakIterator::DONE) ) {
+        if ( break_position <= last_break_position || break_position == static_cast<int>(icu::BreakIterator::DONE) ) {
             break_position = breakitr->following(i) ;
-            if ( break_position == static_cast<int>(BreakIterator::DONE) )
+            if ( break_position == static_cast<int>(icu::BreakIterator::DONE) )
                 break_position = line.last_ ;
         }
         if ( break_position < line.first_ )
@@ -418,7 +418,7 @@ bool TextLayoutEngine::itemize(int32_t start, int32_t end, vector<TextItem> &ite
 
 
 TextLayoutEngine::TextLayoutEngine(const string &text) {
-    us_ = UnicodeString::fromUTF8(text) ;
+    us_ = icu::UnicodeString::fromUTF8(text) ;
 }
 
 void TextLayoutEngine::setFont(const Font &font) {

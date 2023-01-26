@@ -1,8 +1,9 @@
-#include <cvx/gfx/plot/legend.hpp>
-#include <cvx/gfx/plot/graph.hpp>
+#include <gfx/legend.hpp>
+#include <gfx/graph.hpp>
 
 using namespace std ;
-namespace cvx { namespace gfx {
+
+namespace gfx {
 
 void Legend::draw(const std::vector<std::unique_ptr<Graph>> &graphs, Canvas &c, double w, double h)
 {
@@ -106,4 +107,4 @@ void Legend::draw(const std::vector<std::unique_ptr<Graph>> &graphs, Canvas &c, 
 
 
 
-}}
+}

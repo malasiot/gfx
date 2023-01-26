@@ -30,7 +30,7 @@ enum BlendMode {
 
 class StyledText ;
 
-class Canvas: public detail::RenderingContext {
+class Canvas: public detail::CanvasImpl {
 protected:
     Canvas(Canvas &&op) = delete ;
     Canvas& operator=(Canvas&& op) = delete ;

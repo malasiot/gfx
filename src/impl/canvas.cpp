@@ -34,7 +34,7 @@ State::State(): font_("Arial", 10) {
 }
 
 
-void RenderingContext::set_cairo_stroke(const Pen &pen) {
+void CanvasImpl::set_cairo_stroke(const Pen &pen) {
 
     const Color &clr = pen.lineColor() ;
 
@@ -79,7 +79,7 @@ void RenderingContext::set_cairo_stroke(const Pen &pen) {
         cairo_set_dash(cr(), dash_array.data(), dash_array.size(), dash_offset) ;
 }
 
-void RenderingContext::cairo_apply_linear_gradient(const LinearGradientBrush &lg) {
+void CanvasImpl::cairo_apply_linear_gradient(const LinearGradientBrush &lg) {
     cairo_pattern_t *pattern;
     cairo_matrix_t matrix;
 
@@ -108,7 +108,7 @@ void RenderingContext::cairo_apply_linear_gradient(const LinearGradientBrush &lg
     cairo_pattern_destroy (pattern);
 }
 
-void RenderingContext::cairo_apply_radial_gradient(const RadialGradientBrush &rg) {
+void CanvasImpl::cairo_apply_radial_gradient(const RadialGradientBrush &rg) {
     cairo_pattern_t *pattern;
     cairo_matrix_t matrix;
 
@@ -137,7 +137,7 @@ void RenderingContext::cairo_apply_radial_gradient(const RadialGradientBrush &rg
     cairo_pattern_destroy (pattern);
 }
 
-void RenderingContext::cairo_apply_pattern(const PatternBrush &pat) {
+void CanvasImpl::cairo_apply_pattern(const PatternBrush &pat) {
 
     cairo_pattern_t *pattern = pat.handle();
 
@@ -146,7 +146,7 @@ void RenderingContext::cairo_apply_pattern(const PatternBrush &pat) {
     cairo_set_source (cr(), pattern);
 }
 
-void RenderingContext::fill_stroke_shape() {
+void CanvasImpl::fill_stroke_shape() {
 
     const auto &state = state_.top() ;
     const Pen *pen = state.pen_.get() ;
@@ -167,7 +167,7 @@ void RenderingContext::fill_stroke_shape() {
     cairo_new_path(cr());
 }
 
-void RenderingContext::set_cairo_fill(const Brush *br) {
+void CanvasImpl::set_cairo_fill(const Brush *br) {
 
     if ( br->fillRule() == FillRule::EvenOdd)
         cairo_set_fill_rule (cr(), CAIRO_FILL_RULE_EVEN_ODD);
@@ -190,12 +190,12 @@ void RenderingContext::set_cairo_fill(const Brush *br) {
 }
 
 
-void RenderingContext::line_path(double x0, double y0, double x1, double y1) {
+void CanvasImpl::line_path(double x0, double y0, double x1, double y1) {
     cairo_move_to(cr(), x0, y0) ;
     cairo_line_to(cr(), x1, y1) ;
 }
 
-void RenderingContext::polyline_path(double *pts, int n, bool close) {
+void CanvasImpl::polyline_path(double *pts, int n, bool close) {
     if ( n < 2 ) return ;
 
     cairo_move_to(cr(), pts[0], pts[1]) ;
@@ -206,14 +206,12 @@ void RenderingContext::polyline_path(double *pts, int n, bool close) {
     if ( close ) cairo_close_path(cr()) ;
 }
 
-cairo_t *RenderingContext::cr() {
+cairo_t *CanvasImpl::cr() {
     detail::throw_exception_on_cairo_status(cairo_status(cr_)) ;
     return cr_ ;
 }
 
-
-
-void RenderingContext::path(const Path &path) {
+void CanvasImpl::path(const Path &path) {
 
     cairo_new_path(cr()) ;
 
@@ -237,7 +235,7 @@ void RenderingContext::path(const Path &path) {
 }
 
 
-void RenderingContext::rect_path(double x0, double y0, double w, double h) {
+void CanvasImpl::rect_path(double x0, double y0, double w, double h) {
     cairo_rectangle(cr(), x0, y0, w, h);
 }
 
@@ -317,11 +315,11 @@ cairo_surface_t *cairo_create_image_surface(const Image &im)
 }
 
 
-RenderingContext::RenderingContext() {
+CanvasImpl::CanvasImpl() {
 
 }
 
-RenderingContext::~RenderingContext() {
+CanvasImpl::~CanvasImpl() {
     cairo_destroy(cr_) ;
 }
 
@@ -337,8 +335,7 @@ void Canvas::setBrush(const Brush &br) {
     state_.top().brush_.reset(b) ;
 }
 
-void Canvas::clearBrush()
-{
+void Canvas::clearBrush() {
     state_.top().brush_.reset(nullptr) ;
 }
 
@@ -726,26 +723,21 @@ static void cairo_elliptical_arc_to(cairo_t *cr, double x2, double y2)
     rx = x2 - x1 ;
     ry = y2 - y1 ;
 
-    if ( rx > 0 && ry > 0 )
-    {
+    if ( rx > 0 && ry > 0 ) {
         cx = x1 ;  	cy = y2 ;
 
         cairo_curve_to(cr,
                        cx + SVG_ARC_MAGIC * rx, cy - ry,
                        cx + rx, cy - SVG_ARC_MAGIC * ry,
                        x2, y2) ;
-    }
-    else if ( rx < 0 && ry > 0 )
-    {
+    } else if ( rx < 0.0 && ry > 0.0 ) {
         rx = -rx ;	cx = x2 ;	cy = y1 ;
 
         cairo_curve_to(cr,
                        cx + rx, cy + SVG_ARC_MAGIC * ry,
                        cx + SVG_ARC_MAGIC * rx,  cy + ry,
                        x2, y2) ;
-    }
-    else if ( rx < 0 && ry < 0 )
-    {
+    } else if ( rx < 0 && ry < 0 ) {
         rx = -rx ; ry = -ry ;	cx = x1 ;	cy = y2 ;
 
         cairo_curve_to(cr,
@@ -764,7 +756,6 @@ static void cairo_elliptical_arc_to(cairo_t *cr, double x2, double y2)
 }
 
 void Canvas::drawEllipse(double xp, double yp, double rxp, double ryp) {
-
     cairo_move_to(cr(), xp, yp - ryp) ;
     cairo_elliptical_arc_to(cr(), xp + rxp, yp) ;
     cairo_elliptical_arc_to(cr(), xp, yp + ryp) ;
@@ -775,19 +766,16 @@ void Canvas::drawEllipse(double xp, double yp, double rxp, double ryp) {
 }
 
 
-Canvas::~Canvas()
-{
-
+Canvas::~Canvas() {
 }
 
-Canvas::Canvas(Surface &surface): RenderingContext(), surface_(surface) {
+Canvas::Canvas(Surface &surface): CanvasImpl(), surface_(surface) {
     cr_ = cairo_create(surface.handle()) ;
-    state_.emplace() ;
+    state_.emplace() ; // default state
 }
 
 
-void Canvas::drawImage(const Image &im,  double opacity )
-{
+void Canvas::drawImage(const Image &im,  double opacity ) {
     cairo_surface_t *imsurf = detail::cairo_create_image_surface(im) ;
 
     cairo_save(cr()) ;
@@ -809,13 +797,11 @@ void Canvas::setTransform(const Matrix2d &tr) {
     cairo_push_transform(cr(), tr) ;
 }
 
-void Canvas::clearPen()
-{
+void Canvas::clearPen() {
     state_.top().pen_.reset(nullptr) ;
 }
 
-void Canvas::setAntialias(bool anti_alias)
-{
+void Canvas::setAntialias(bool anti_alias) {
     if ( anti_alias ) {
         cairo_set_antialias (cr(), CAIRO_ANTIALIAS_BEST);
     }
@@ -832,10 +818,7 @@ PatternBrush::PatternBrush(const Surface &surf): surf_(surf) {
    detail::throw_exception_on_cairo_status(cairo_pattern_status(pattern_.get())) ;
 
    cairo_pattern_set_filter (pattern_.get(), CAIRO_FILTER_BEST); //?
-
-
 }
-
 
 void PatternBrush::setSpread(SpreadMethod method) {
 

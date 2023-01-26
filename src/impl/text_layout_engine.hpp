@@ -86,7 +86,7 @@ private:
     void computeHeight();
 
 private:
-    UnicodeString us_ ;
+    icu::UnicodeString us_ ;
     Font font_desc_ ;
     cairo_scaled_font_t *font_ = nullptr ;
     std::map<unsigned,double> width_map_ ;
