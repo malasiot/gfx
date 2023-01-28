@@ -491,7 +491,8 @@ void RenderingContext::applyClipPath(ClipPathElement *cp)
 
 void RenderingContext::applyClipPath(ClipPathElement *cp)
 {
-    float fw = canvas_.surface().width(), fh = canvas_.surface().height();
+    float fw = canvas_.surfaceWidth(), fh = canvas_.surfaceHeight();
+
     ImageSurface is(fw, fh) ;
     Canvas clip_canvas(is) ;
 

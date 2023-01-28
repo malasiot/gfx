@@ -1,7 +1,7 @@
 #include <gfx/axis.hpp>
 #include <gfx/canvas.hpp>
-//#include <cvx/util/misc/format.hpp>
 
+#include <iomanip>
 using namespace std ;
 
 namespace gfx {
@@ -11,7 +11,9 @@ TickFormatter Axis::nullFormatter =
 
 TickFormatter Axis::defaultFormatter =
            [](double v, int idx) {
-    return "" ;
+    char s[20] ;
+    snprintf(s, 20, "%.2g", v);
+    return string(s) ;
             //  return cvx::util::format("%.2g", v) ;
     };
 
@@ -21,7 +23,7 @@ void Axis::computeAxisLayout(double ls, double wsize, double gscale) {
     ls_ = ls ;
     unsigned numTics = 2 ;
 
-    double s = wsize - 2*margin_ * gscale - ls ;
+    double s = wsize - 2*margin_ * gscale  ;
     double sep ;
 
     // Compute number of tics for each axis based on the window dimensions

@@ -37,10 +37,10 @@ class RenderingContext: public Context {
 public:
 
     RenderingContext(gfx::Canvas &canvas, float fw, float fh, RenderingMode m = RenderingMode::Display): Context(fw, fh), canvas_(canvas), rendering_mode_(m) {
-        const gfx::Surface &s = canvas.surface() ;
-        dpi_x_ = s.dpiX() ;
-        dpi_y_ = s.dpiY() ;
+        dpi_x_ = canvas.surfaceDpiX() ;
+        dpi_y_ = canvas.surfaceDpiY() ;
     }
+
     void pushState(const Style &) ;
     void popState() ;
     void pushTransform(const Matrix2d &) ;

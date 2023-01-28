@@ -1,15 +1,18 @@
-file(GLOB GFX_TEST_FILES "*.cpp")
+include_directories(${CMAKE_SOURCE_DIR}/include/)
 
+add_executable(test_basic_shapes test_basic_shapes.cpp)
+target_link_libraries(test_basic_shapes gfx)
+
+add_executable(test_plot test_plot.cpp)
+target_link_libraries(test_plot gfx)
 
 IF( BUILD_GFX_QT_SURFACE )
-find_package(Qt5Widgets 5.5 CONFIG REQUIRED Core Widgets)
-SET(QT_LIBRARIES Qt5::Widgets)
-ELSE (BUILD_GFX_QT_SURFACE )
-LIST(REMOVE_ITEM GFX_TEST_FILES test_qt_surface.cpp)
-ENDIF()
+find_package(PkgConfig)
 
-foreach(TEST_FILENAME ${GFX_TEST_FILES})
-    get_filename_component(TEST_TARGET ${TEST_FILENAME} NAME_WE)
-    add_executable(${TEST_TARGET} ${TEST_FILENAME})
-    target_link_libraries(${TEST_TARGET} gfx ${QT_LIBRARIES})
-endforeach(TEST_FILENAME)
+pkg_check_modules(GTKMM gtkmm-3.0) # look into FindPkgConfig.cmake,
+link_directories(${GTKMM_LIBRARY_DIRS})
+include_directories(${GTKMM_INCLUDE_DIRS})
+add_executable(test_qt_surface test_qt_surface.cpp)
+target_link_libraries(test_qt_surface gfx ${GTKMM_LIBRARIES} pthread)
+
+ENDIF()

@@ -10,3 +10,7 @@ IF( BUILD_GFX_QT_SURFACE )
 find_package(Qt5Widgets 5.5 CONFIG REQUIRED)
 SET(QT_LIBRARIES Qt5::Widgets)
 ENDIF ( BUILD_GFX_QT_SURFACE )
+
+find_package(PkgConfig)
+
+pkg_check_modules(GTKMM gtkmm-3.0) # look into FindPkgConfig.cmake,

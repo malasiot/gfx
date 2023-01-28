@@ -37,8 +37,9 @@ protected:
 public:
    ~Canvas() ;
     Canvas(Surface &surface) ;
+    Canvas(cairo_t *cr, float w, float h, float dpi) ;
 
-    const Surface &surface() const { return surface_ ; }
+    //const Surface &surface() const { return surface_ ; }
 
     void save() ;
     void restore() ;
@@ -95,8 +96,13 @@ public:
 
     void fill(const Color &color) ;
 
+    float surfaceDpiX() const { return dpi_x_ ; }
+    float surfaceDpiY() const { return dpi_y_ ; }
+    float surfaceWidth() const { return width_ ; }
+    float surfaceHeight() const { return height_ ; }
+
 protected:
-    Surface &surface_ ;
+    float width_, height_, dpi_x_, dpi_y_ ;
 } ;
 
 }

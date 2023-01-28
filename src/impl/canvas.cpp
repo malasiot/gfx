@@ -316,11 +316,13 @@ cairo_surface_t *cairo_create_image_surface(const Image &im)
 
 
 CanvasImpl::CanvasImpl() {
+}
 
+CanvasImpl::CanvasImpl(cairo_t *cr): cr_(cr), owns_cr_(false) {
 }
 
 CanvasImpl::~CanvasImpl() {
-    cairo_destroy(cr_) ;
+    if ( owns_cr_ ) cairo_destroy(cr_) ;
 }
 
 
@@ -769,8 +771,17 @@ void Canvas::drawEllipse(double xp, double yp, double rxp, double ryp) {
 Canvas::~Canvas() {
 }
 
-Canvas::Canvas(Surface &surface): CanvasImpl(), surface_(surface) {
+Canvas::Canvas(Surface &surface): CanvasImpl() {
     cr_ = cairo_create(surface.handle()) ;
+    width_ = surface.width() ;
+    height_ = surface.height() ;
+    dpi_x_ = surface.dpiX() ;
+    dpi_y_ = surface.dpiY() ;
+    state_.emplace() ; // default state
+}
+
+Canvas::Canvas(cairo_t *cr, float width, float height, float dpi): CanvasImpl(cr),
+width_(width), height_(height), dpi_x_(dpi), dpi_y_(dpi) {
     state_.emplace() ; // default state
 }
 

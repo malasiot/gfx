@@ -43,10 +43,12 @@ class CanvasImpl {
 public:
 
     CanvasImpl() ;
+    CanvasImpl(cairo_t *cr) ;
     ~CanvasImpl() ;
 
     cairo_t *cr_ = nullptr;
     std::stack<State> state_ ;
+    bool owns_cr_ = true ;
 
 protected:
 
