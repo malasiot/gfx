@@ -12,7 +12,7 @@ class Graph ;
 class LineGraph ;
 class Legend ;
 
-class Plot {
+class Plot: public std::enable_shared_from_this<Plot> {
 public:
 
     Plot() = default;
@@ -49,6 +49,8 @@ public:
 
     void draw(Canvas &c, double w, double h) ;
 
+    // show plot on gtk3 window
+    void show(const std::string &title = {}) ;
 
 private:
 

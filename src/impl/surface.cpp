@@ -38,8 +38,19 @@ ImageSurface::ImageSurface(int w, int h, double dpix, double dpiy):
 
 RecordingSurface::RecordingSurface(double width, double height): Surface(width, height, 96, 96) {
     cairo_rectangle_t r{0, 0, width, height} ;
-    surf_.reset(cairo_recording_surface_create(CAIRO_CONTENT_COLOR_ALPHA, &r), &cairo_surface_destroy);
+    surf_.reset(cairo_recording_surface_create(CAIRO_CONTENT_COLOR_ALPHA, nullptr), &cairo_surface_destroy);
     detail::throw_exception_on_cairo_status(cairo_surface_status(surf_.get())) ;
+}
+
+InfiniteRecordingSurface::InfiniteRecordingSurface(double width, double height): Surface(width, height, 96, 96) {
+    surf_.reset(cairo_recording_surface_create(CAIRO_CONTENT_COLOR_ALPHA, nullptr), &cairo_surface_destroy);
+    detail::throw_exception_on_cairo_status(cairo_surface_status(surf_.get())) ;
+}
+
+Rectangle2d InfiniteRecordingSurface::getExtents() const {
+    double x0, y0, width, height ;
+    cairo_recording_surface_ink_extents(surf_.get(), &x0, &y0, &width, &height);
+    return Rectangle2d(x0, y0, width, height) ;
 }
 
 Image ImageSurface::getImage() const

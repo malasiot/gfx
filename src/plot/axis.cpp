@@ -184,6 +184,7 @@ Rectangle2d Axis::paintLabel(Canvas &canvas,  const string &text, double x, doub
     return layout_rect ;
 }
 
+
 void XAxis::computeLayout(double wsize, double gscale) {
     Text layout("-0.09") ;
     layout.setFont(label_font_) ;

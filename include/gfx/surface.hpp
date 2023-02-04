@@ -2,6 +2,7 @@
 #define GFX_SURFACE_HPP
 
 #include <gfx/impl/surface.hpp>
+#include <gfx/rectangle.hpp>
 
 namespace gfx {
 
@@ -43,6 +44,12 @@ public:
     RecordingSurface(double width, double height) ;
 };
 
+class InfiniteRecordingSurface: public Surface {
+public:
+    InfiniteRecordingSurface(double width, double height) ;
+
+    Rectangle2d getExtents() const ;
+};
 
 }
 
