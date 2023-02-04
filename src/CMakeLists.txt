@@ -43,6 +43,7 @@ set(LIB_SOURCES
     plot/markers.cpp
 
     plot/gtk_widget.cpp
+    plot/gtk_widget.hpp
 
     ${LIBRARY_INCLUDE_DIR}/impl/canvas.hpp
     ${LIBRARY_INCLUDE_DIR}/font.hpp
@@ -65,7 +66,7 @@ set(LIB_SOURCES
     ${LIBRARY_INCLUDE_DIR}/graph.hpp
     ${LIBRARY_INCLUDE_DIR}/line_graph.hpp
     ${LIBRARY_INCLUDE_DIR}/line_plot.hpp
-    ${LIBRARY_INCLUDE_DIR}/gtk_widget.hpp
+
 )
 
 IF ( BUILD_GFX_QT_SURFACE )
