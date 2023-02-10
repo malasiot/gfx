@@ -1,4 +1,4 @@
-#include <gfx/line_graph.hpp>
+#include <gfx/line_plot.hpp>
 #include <gfx/plot.hpp>
 #include <gfx/markers.hpp>
 
@@ -211,6 +211,19 @@ void LineGraph::parseParamString(const char *src) {
         break ;
 
     }
+}
+
+LineGraph &LinePlot::lines(const std::vector<double> &x, const std::vector<double> &y, const char *style) {
+    LineGraph *g = new LineGraph(x, y, style) ;
+    addGraph(g) ;
+    return *g ;
+}
+
+LineGraph &LinePlot::errorbars(const std::vector<double> &x, const std::vector<double> &y, const std::vector<double> &e, const char *style) {
+    LineGraph *g = new LineGraph(x, y, style) ;
+    g->setErrors(e) ;
+    addGraph(g) ;
+    return *g ;
 }
 
 

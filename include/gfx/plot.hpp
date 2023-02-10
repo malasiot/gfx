@@ -3,7 +3,7 @@
 
 #include <vector>
 #include <gfx/axis.hpp>
-#include <gfx/line_graph.hpp>
+#include <gfx/graph.hpp>
 #include <gfx/legend.hpp>
 
 namespace gfx {
@@ -16,22 +16,6 @@ class Plot: public std::enable_shared_from_this<Plot> {
 public:
 
     Plot() = default;
-
-    LineGraph &lines(const std::vector<double> &x, const std::vector<double> &y, const char *style = nullptr) {
-        LineGraph *g = new LineGraph(x, y, style) ;
-        addGraph(g) ;
-        return *g ;
-    }
-
-    LineGraph &errorbars(const std::vector<double> &x,
-                         const std::vector<double> &y,
-                         const std::vector<double> &e,
-                         const char *style = nullptr) {
-        LineGraph *g = new LineGraph(x, y, style) ;
-        g->setErrors(e) ;
-        addGraph(g) ;
-        return *g ;
-    }
 
     Plot &addGraph(Graph *g) {
         graphs_.push_back(std::unique_ptr<Graph>(g)) ;
@@ -50,10 +34,9 @@ public:
     void draw(Canvas &c, double w, double h) ;
 
     // show plot on gtk3 window
-    void show(const std::string &title = {}) ;
+    void show(const std::string &title = {}, bool blocking = false) ;
 
 private:
-
 
     XAxis x_axis_ ;
     YAxis y_axis_ ;
@@ -70,8 +53,6 @@ private:
 
 private:
     void drawLegend(Canvas &c, double w, double h);
-
-
 } ;
 
 

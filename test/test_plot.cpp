@@ -5,7 +5,7 @@
 #include <gfx/bbox.hpp>
 
 #include <gfx/axis.hpp>
-#include <gfx/plot.hpp>
+#include <gfx/line_plot.hpp>
 
 #include <cmath>
 
@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
 
     canvas.setTransform(tr);
 
-    Plot plot ;
+    LinePlot plot ;
 
     vector<double> x1 = { 0.0, 0.1, 0.6 } ;
     vector<double> y1 = { 1.0, 3.1, -0.4 } ;

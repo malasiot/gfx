@@ -11,11 +11,11 @@ void Plot::draw(Canvas &c, double w, double h)
     if ( !y_axis_.has_range_ )
         y_axis_.setRange(data_bounds_.minY(), data_bounds_.maxY()) ;
 
-    x_axis_.computeLayout(w, 1.0) ;
-    y_axis_.computeLayout(h, 1.0) ;
+    x_axis_.computeLayout(w) ;
+    y_axis_.computeLayout(h) ;
 
-    x_axis_.draw(c, w, h, 1.0);
-    y_axis_.draw(c, w, h, 1.0);
+    x_axis_.draw(c, w, h);
+    y_axis_.draw(c, w, h);
 
     c.drawLine(0, -h, w, -h) ;
     c.drawLine(w, 0, w, -h) ;

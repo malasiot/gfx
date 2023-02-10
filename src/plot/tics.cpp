@@ -1,9 +1,26 @@
 #include <gfx/tics.hpp>
 #include <cmath>
+#include <cassert>
+
+#include <fmt/format.h>
 
 using namespace std ;
 
 namespace gfx {
+
+std::string ScalarTickFormatter::format(double v, size_t) {
+    return fmt::format("{:." + std::to_string(precision_) + "g}", v) ;
+}
+
+std::string FmtTickFormatter::format(double v, size_t) {
+    return fmt::format(format_str_, v) ;
+}
+
+
+string FixedTickFormatter::format(double, size_t idx) {
+    assert(idx < labels_.size());
+    return labels_[idx] ;
+}
 
 double AutoTickLocator::sround(double x) {
     double s = 1.0 ;
@@ -44,8 +61,9 @@ void AutoTickLocator::bounds(double sx, double xu, double xl, unsigned &nTics, d
 }
 
 
-void AutoTickLocator::compute(double vmin, double vmax, uint maxTics, double minStep, double &label_min, double &label_max, std::vector<double> &loc)
+void AutoTickLocator::compute(double vmin, double vmax, double vscale, uint maxTics, double minStep, double &label_min, double &label_max, std::vector<double> &loc)
 {
+    vmin = vmin * vscale ; vmax = vmax * vscale ;
     uint tics = maxTics ;
     uint numTics ;
     double step ;
@@ -75,19 +93,35 @@ void AutoTickLocator::compute(double vmin, double vmax, uint maxTics, double min
     for( uint i=0 ; i<numTics ; i++ ) {
         loc.push_back(v) ;
         v += step ;
+        if ( fabs(v) < 1.0e-4 ) v = 0.0 ;
     }
 }
 
-void FixedTickLocator::compute(double vmin, double vmax, uint maxTics, double minStep, double &label_min, double &label_max, std::vector<double> &loc)
+void FixedTickLocator::compute(double vmin, double vmax, double vscale, uint maxTics, double minStep, double &label_min, double &label_max, std::vector<double> &loc)
 {
     label_min = vmin ;
     label_max = vmax ;
 
     for ( int i=0 ; i<loc_.size() ; i++ ) {
-        if ( loc_[i] < vmin || loc_[i] > vmax ) continue ;
+        label_min = std::min(label_min, loc_[i]) ;
+        label_max = std::max(label_max, loc_[i]) ;
         loc.push_back(loc_[i]) ;
     }
 }
+
+void MultipleLocator::compute(double vmin, double vmax, double vscale, uint maxTics, double minStep, double &label_min, double &label_max, std::vector<double> &loc) {
+    double base = base_ * vscale ;
+    vmin = ceil( vmin * vscale / base ) * base ;
+    vmax = floor( vmax * vscale / base ) * base ;
+
+    for( double v = vmin - base ; v < vmax + base ; v += base ) {
+        loc.push_back(v) ;
+    }
+
+    label_min = loc.front() ;
+    label_max = loc.back() ;
+}
+
 
 
 

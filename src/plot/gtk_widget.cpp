@@ -90,26 +90,33 @@ public:
 
     ~GUI() {
         if ( app_ ) app_->quit() ;
-        if ( thread_ ) thread_->join() ;
+        wait() ;
     }
+
+    void wait() {
+        if ( thread_ && thread_->joinable() )
+            thread_->join() ;
+        thread_ = nullptr ;
+    }
+
     void init() {
         if ( !app_ ) {
-        app_ = Gtk::Application::create("org.gtkmm.examples.base", Gio::ApplicationFlags::APPLICATION_NON_UNIQUE);
-      //  app_->signal_activate().connect(sigc::bind(sigc::mem_fun(instance_.get(), &GUI::on_activate), plot, name)) ;
-      app_->register_application() ;
+            app_ = Gtk::Application::create("org.gtkmm.examples.base", Gio::ApplicationFlags::APPLICATION_NON_UNIQUE);
+            //  app_->signal_activate().connect(sigc::bind(sigc::mem_fun(instance_.get(), &GUI::on_activate), plot, name)) ;
+            app_->register_application() ;
 
-        window_.reset(new Gtk::Window) ;
+            window_.reset(new Gtk::Window) ;
 
-        app_->add_window(*window_) ;
-        window_->set_default_geometry(1000, 1000);
+            app_->add_window(*window_) ;
+            window_->set_default_geometry(1000, 1000);
 
-        plot_area_.reset(new PlotArea(nullptr)) ;
+            plot_area_.reset(new PlotArea(nullptr)) ;
 
-        window_->add(*plot_area_);
-        window_->show_all() ;
+            window_->add(*plot_area_);
+            window_->show_all() ;
 
-        app_->run() ;
-      }
+            app_->run() ;
+        }
 
 
     }
@@ -122,39 +129,37 @@ public:
     static GUI *instance() { return instance_.get() ; }
 
 
-     void on_notification(const std::shared_ptr<Plot> &plot, const std::string &name) {
+    void on_notification(const std::shared_ptr<Plot> &plot, const std::string &name) {
+        window_->set_title(name) ;
+        plot_area_->setPlot(plot) ;
+    }
 
-         window_->set_title(name) ;
-         plot_area_->setPlot(plot) ;
+    static void showPlot(const std::shared_ptr<Plot> &plot, const std::string &name, bool blocking) {
+        instance_->create() ;
+        instance_->queue_.dispatch(std::bind(&GUI::on_notification, instance_.get(), plot, name));
+        if ( blocking ) {
+            instance_->wait() ;
 
-
-     }
-
-     static void showPlot(const std::shared_ptr<Plot> &plot, const std::string &name) {
-
-         instance_->create() ;
-         instance_->queue_.dispatch(std::bind(&GUI::on_notification, instance_.get(), plot, name));
-
-      }
+        }
+    }
 
 
 private:
-     std::map<std::string, Gtk::ApplicationWindow> windows_ ;
-     IdleQueue queue_;
-     std::unique_ptr<PlotArea> plot_area_ ;
-     std::unique_ptr<Gtk::Window> window_ ;
-     Glib::RefPtr<Gtk::Application> app_ ;
-     std::unique_ptr<std::thread> thread_ ;
-     static std::unique_ptr<GUI> instance_ ;
+    std::map<std::string, Gtk::ApplicationWindow> windows_ ;
+    IdleQueue queue_;
+    std::unique_ptr<PlotArea> plot_area_ ;
+    std::unique_ptr<Gtk::Window> window_ ;
+    Glib::RefPtr<Gtk::Application> app_ ;
+    std::unique_ptr<std::thread> thread_ ;
+    static std::unique_ptr<GUI> instance_ ;
 
 };
 
 std::unique_ptr<GUI> GUI::instance_( new GUI() );
 
-
-void Plot::show(const std::string &title) {
+void Plot::show(const std::string &title, bool b) {
     auto ptr = shared_from_this();
-    GUI::showPlot(ptr, title) ;
+    GUI::showPlot(ptr, title, b) ;
 }
 
 

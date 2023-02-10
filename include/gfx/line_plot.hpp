@@ -1,63 +1,58 @@
-#ifndef __XPLOT_LINE_PLOT_HPP__
-#define __XPLOT_LINE_PLOT_HPP__
+#ifndef GFX_PLOT_LINEPLOT_HPP
+#define GFX_PLOT_LINEPLOT_HPP
 
-#include <vector>
-#include <xplot/subplot.hpp>
-#include <xplot/color.hpp>
-#include <xplot/bbox.hpp>
+#include <gfx/graph.hpp>
+#include <gfx/markers.hpp>
+#include <gfx/plot.hpp>
 
-namespace xplot {
+namespace gfx {
 
-class LinePlot: public Subplot
-{
+class LineGraph: public Graph {
 public:
+    LineGraph(const std::vector<double> &x, const std::vector<double> &y, const char *ps = nullptr) ;
 
-    LinePlot(const std::vector<double> &x, const std::vector<double> &y): data_pts_x_(x), data_pts_y_(y) {
-        compute_bounds() ;
+    LineGraph &setErrors(const std::vector<double> &e) { e_ = e ; return *this; }
+
+    Pen &pen() { return pen_ ; }
+    LineGraph & setMarker(Marker *marker) { marker_.reset(marker) ; return *this ; }
+    void setBrush(Brush *brush) {
+        brush_.reset(brush) ;
     }
 
-    enum LineStyle { Solid, SolidSegments, Dashed, Dotted, DashDot, Empty } ;
-    enum MarkerStyle { Circle, Square, XMark, Point, Plus, Star, Diamond, TriangleDown,
-                       TriangleUp, TriangleLeft, TriangleRight, None } ;
+    BoundingBox getDataBounds() override;
+    void draw(Canvas &c) override;
+    void drawLegend(Canvas &c, double width, double height) override;
 
-    // Set the title of this line to appear on the graph legend
-
-    void setLabel(const std::string &title) ;
-
-    // Set line and marker appearance
-
-    void setLineWidth(double width) ;
-    void setLineStyle(LineStyle style) ;
-    void setMarkerStyle(MarkerStyle ms) ;
-    void setLineColor(const Color &) ;
-    void setMarkerEdgeColor(const Color &) ;
-    void setMarkerFaceColor(const Color &) ;
-    void setMarkerSize(double sz) ;
-    void setMarkerLineWidth(double mw) ;
-
-    void draw(RenderingContext &) override {}
-
-    BoundingBox getDataBounds() override ;
+    void parseParamString(const char *ps) ;
 
 private:
 
-    std::vector<double> data_pts_x_, data_pts_y_ ;
-    BoundingBox bounds_ ;
-    std::string title_ ;
-    Color lc_, mec_, mfc_ ;
-    MarkerStyle mstyle_ ;
-    LineStyle lstyle_ ;
-    double lw_, mlw_, msz_ ;
+    Pen pen_ = Pen() ;
+    std::unique_ptr<Brush> brush_  ;
+    std::vector<double> x_, y_, e_ ;
+    std::unique_ptr<Marker> marker_ ;
 
-    void parseParamString(const char *wstr) ;
-
-    void compute_bounds()  ;
-
+    Pen error_bar_pen_ = Pen() ;
+    Pen error_bar_cap_pen_ = Pen();
+    uint draw_error_bars_every_nth_ = 1 ;
+    double error_bar_cap_width_ = 3.0 ;
 
 } ;
 
+class LinePlot: public Plot {
+public:
+
+    LinePlot() = default;
+
+    LineGraph &lines(const std::vector<double> &x, const std::vector<double> &y, const char *style = nullptr);
+
+    LineGraph &errorbars(const std::vector<double> &x,
+                         const std::vector<double> &y,
+                         const std::vector<double> &e,
+                         const char *style = nullptr);
+} ;
 
 
-} // namespace xplot ;
-
+}
 #endif
+

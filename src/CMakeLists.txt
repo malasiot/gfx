@@ -36,11 +36,14 @@ set(LIB_SOURCES
     svg/base64.hpp
 
     plot/plot.cpp
+    plot/line_plot.cpp
+    plot/bar_chart.cpp
     plot/axis.cpp
     plot/tics.cpp
     plot/legend.cpp
-    plot/line_graph.cpp
+
     plot/markers.cpp
+    plot/bar_graph.cpp
 
     plot/gtk_widget.cpp
     plot/gtk_widget.hpp
@@ -64,8 +67,8 @@ set(LIB_SOURCES
     ${LIBRARY_INCLUDE_DIR}/tics.hpp
     ${LIBRARY_INCLUDE_DIR}/legend.hpp
     ${LIBRARY_INCLUDE_DIR}/graph.hpp
-    ${LIBRARY_INCLUDE_DIR}/line_graph.hpp
     ${LIBRARY_INCLUDE_DIR}/line_plot.hpp
+    ${LIBRARY_INCLUDE_DIR}/bar_chart.hpp
 
 )
 
@@ -98,6 +101,7 @@ target_link_libraries(gfx
     ${ICU_LIBRARIES}
     ${QT_LIBRARIES}
     ${GTKMM_LIBRARIES}
+    fmt::fmt
 )
 
 # Install library

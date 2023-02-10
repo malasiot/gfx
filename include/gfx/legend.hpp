@@ -30,7 +30,7 @@ private:
     double margin_ = 4 ;
     Placement placement_ = TopRight ;
 
-    Font label_font_ = Font("Arial", 10) ;
+    Font label_font_ = Font("Arial", 12) ;
     SolidBrush label_brush_ = SolidBrush(NamedColor::black()) ;
     SolidBrush bg_brush_ = SolidBrush(NamedColor::white()) ;
     Pen bg_pen_ = Pen() ;
