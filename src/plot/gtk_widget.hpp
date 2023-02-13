@@ -1,7 +1,7 @@
 #pragma once
 
 #include <gtkmm.h>
-#include <gfx/plot.hpp>
+#include <gfx/plot/plot.hpp>
 
 namespace gfx {
 

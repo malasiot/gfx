@@ -1,17 +1,17 @@
-#include <gfx/line_plot.hpp>
-#include <gfx/plot.hpp>
-#include <gfx/markers.hpp>
+#include <gfx/plot/line_plot.hpp>
+#include <gfx/plot/plot.hpp>
+#include <gfx/plot/markers.hpp>
 
 using namespace std ;
 
 namespace gfx {
 
-LineGraph::LineGraph(const vector<double> &x, const vector<double> &y, const char *ps): x_(x), y_(y) {
+LinePlotElement::LinePlotElement(const vector<double> &x, const vector<double> &y, const char *ps): x_(x), y_(y) {
     assert(x.size() == y.size()) ;
     if ( ps != nullptr ) parseParamString(ps) ;
 }
 
-BoundingBox LineGraph::getDataBounds() {
+BoundingBox LinePlotElement::getDataBounds() {
     double minx = numeric_limits<double>::max(),
             miny = numeric_limits<double>::max() ,
             maxx = -numeric_limits<double>::max(),
@@ -27,7 +27,7 @@ BoundingBox LineGraph::getDataBounds() {
     return { minx, miny, maxx, maxy } ;
 }
 
-void LineGraph::draw(Canvas &c)
+void LinePlotElement::draw(Canvas &c)
 {
     auto &xaxis = plot_->xAxis() ;
     auto &yaxis = plot_->yAxis() ;
@@ -60,31 +60,6 @@ void LineGraph::draw(Canvas &c)
         c.restore() ;
 
     }
-    // draw error bars
-
-    if ( !e_.empty() ) {
-
-        for( int i=0 ; i<x_.size() ; i+=draw_error_bars_every_nth_ ) {
-            double x = xaxis.transform(x_[i]) ;
-            double y = yaxis.transform(y_[i]) ;
-            double e =  e_[i];
-
-            double y1 = yaxis.transform(y_[i] - e) ;
-            double y2 = yaxis.transform(y_[i] + e) ;
-            c.save() ;
-            c.setPen(error_bar_pen_) ;
-            c.drawLine(x, y1, x, y2) ;
-            c.restore() ;
-
-            c.save() ;
-            c.setPen(error_bar_cap_pen_) ;
-            c.drawLine(x -error_bar_cap_width_/2, y1, x+error_bar_cap_width_/2, y1) ;
-            c.drawLine(x -error_bar_cap_width_/2, y2, x+error_bar_cap_width_/2, y2) ;
-            c.restore() ;
-
-
-        }
-    }
 
     Path p ;
 
@@ -114,7 +89,7 @@ void LineGraph::draw(Canvas &c)
     }
 }
 
-void LineGraph::drawLegend(Canvas &c, double width, double height)
+void LinePlotElement::drawLegend(Canvas &c, double width, double height)
 {
 
     double lh = height/2 ;
@@ -141,7 +116,7 @@ void LineGraph::drawLegend(Canvas &c, double width, double height)
     }
 }
 
-void LineGraph::parseParamString(const char *src) {
+void LinePlotElement::parseParamString(const char *src) {
 
     const char *c = src ;
     int markerChar = -1 ;
@@ -211,19 +186,6 @@ void LineGraph::parseParamString(const char *src) {
         break ;
 
     }
-}
-
-LineGraph &LinePlot::lines(const std::vector<double> &x, const std::vector<double> &y, const char *style) {
-    LineGraph *g = new LineGraph(x, y, style) ;
-    addGraph(g) ;
-    return *g ;
-}
-
-LineGraph &LinePlot::errorbars(const std::vector<double> &x, const std::vector<double> &y, const std::vector<double> &e, const char *style) {
-    LineGraph *g = new LineGraph(x, y, style) ;
-    g->setErrors(e) ;
-    addGraph(g) ;
-    return *g ;
 }
 
 

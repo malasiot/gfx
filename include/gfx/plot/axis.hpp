@@ -5,7 +5,7 @@
 #include <memory>
 
 #include <gfx/canvas.hpp>
-#include <gfx/tics.hpp>
+#include <gfx/plot/ticks.hpp>
 
 namespace gfx {
 
@@ -34,9 +34,14 @@ public:
     Axis &setLabelFont(const Font &f) { label_font_ = f ; return *this ; }
     Axis &setLabelOffset(double o) { label_offset_ = 0 ; return *this ; }
 
+    Axis &setMargin(double v) { margin_ = v ; return *this ; }
+
     double getScale() const { return scale_ ; }
     double getOffset() const { return offset_ ; }
     bool isLogarithmic() const { return is_log_ ; }
+
+    // set fixed ticks
+    Axis &setTicks(const std::vector<double> &loc, const std::vector<std::string> &labels) ;
 
 protected:
 
@@ -92,6 +97,7 @@ public:
 
     // from data coordinates to device coordinates
     double transform(double x) ;
+
 };
 
 class YAxis: public Axis {

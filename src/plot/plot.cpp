@@ -1,4 +1,7 @@
-#include <gfx/plot.hpp>
+#include <gfx/plot/plot.hpp>
+#include <gfx/plot/line_plot.hpp>
+#include <gfx/plot/bar_chart.hpp>
+#include <gfx/plot/error_bars.hpp>
 
 using namespace std ;
 
@@ -40,5 +43,31 @@ void Plot::draw(Canvas &c, double w, double h)
     legend_.draw(graphs_, c, w, h) ;
 
 }
+
+
+LinePlotElement &Plot::lines(const std::vector<double> &x, const std::vector<double> &y, const char *style) {
+    LinePlotElement *g = new LinePlotElement(x, y, style) ;
+    addGraph(g) ;
+    return *g ;
+}
+
+BarChartElement &Plot::bars(const std::vector<double> &top, double w, double offset, const Color &clr) {
+    BarChartElement *g = new BarChartElement(top, w, offset, clr) ;
+    addGraph(g) ;
+    return *g ;
+}
+
+BarChartElement &Plot::bars(const std::vector<double> &top, const std::vector<double> &bottom, double width, double offset, const Color &clr) {
+    BarChartElement *g = new BarChartElement(top, bottom, width, offset, clr) ;
+    addGraph(g) ;
+    return *g ;
+}
+
+ErrorBarsElement &Plot::errorbars(const std::vector<double> &x, const std::vector<double> &y, const std::vector<double> &e) {
+    ErrorBarsElement *g = new ErrorBarsElement(x, y, e) ;
+    addGraph(g) ;
+    return *g ;
+}
+
 
 }

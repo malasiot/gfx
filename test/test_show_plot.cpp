@@ -1,7 +1,9 @@
 #include <gfx/canvas.hpp>
 #include <gfx/image.hpp>
 #include <gfx/vector.hpp>
-#include <gfx/line_plot.hpp>
+#include <gfx/plot/plot.hpp>
+#include <gfx/plot/bar_chart.hpp>
+
 #include <iostream>
 #include <thread>
 
@@ -9,7 +11,7 @@ using namespace gfx;
 using namespace std ;
 
 
-void makePlot(LinePlot &plot, bool f) {
+void makeLinePlot(Plot &plot) {
     vector<double> x1 = { -0., 1, 1.5 } ;
     vector<double> y1 = { 1.0, 3.1, -0.4 } ;
 
@@ -35,17 +37,31 @@ void makePlot(LinePlot &plot, bool f) {
     plot.legend().setPlacement(Legend::TopRight) ;
 }
 
+void makeBarChart(Plot &plot) {
 
+    vector<double> v1{1, 2, 0.5} ;
+    plot.bars(v1, 0.2)
+            .setPen(new Pen(NamedColor::brown()))
+            .setTitle("Categories") ;
+    plot.bars({1.2, 2.5, 0.8}, v1, 0.2, 0, NamedColor::aqua()).setTitle("Images") ;
+    plot.errorbars({0, 1, 2}, v1, {{0.1, 0.05, 0.2}}) ;
+
+    plot.xAxis().setTicks({0, 1, 2}, {"A", "B", "C"});
+    plot.yAxis().setMargin(0).setGrid(true) ;
+}
 
 int main(int argc, char *argv[]) {
 
-    auto plot1 = std::make_shared<LinePlot>() ;
-    makePlot(*plot1, true) ;
+  //  auto plot1 = std::make_shared<Plot>() ;
+  //  makePlot(*plot1, true) ;
 
+
+  auto plot2 = std::make_shared<Plot>() ;
+  makeBarChart(*plot2) ;
 
   //  std::thread t1(&GUI::, GUI::instance(), plot, "test1") ;
  //   std::thread t2(&GUI::init, GUI::instance()) ;
 
-    plot1->show("test1", true) ;
+    plot2->show("test2", true) ;
 
 }

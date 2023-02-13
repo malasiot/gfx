@@ -1,4 +1,4 @@
-#include <gfx/tics.hpp>
+#include <gfx/plot/ticks.hpp>
 #include <cmath>
 #include <cassert>
 

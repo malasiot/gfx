@@ -1,14 +1,17 @@
-#include <gfx/axis.hpp>
+#include <gfx/plot/axis.hpp>
 #include <gfx/canvas.hpp>
 
 #include <fmt/format.h>
 
-#include <iomanip>
 using namespace std ;
 
 namespace gfx {
 
-
+Axis & Axis::setTicks(const std::vector<double> &loc, const std::vector<std::string> &labels) {
+    tick_locator_.reset(new FixedTickLocator(loc)) ;
+    tick_formatter_.reset(new FixedTickFormatter(labels)) ;
+    return *this ;
+}
 
 void Axis::computeAxisLayout(double ls, double wsize) {
 

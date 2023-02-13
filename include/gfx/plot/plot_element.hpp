@@ -7,7 +7,7 @@
 namespace gfx {
 class Plot ;
 
-class Graph {
+class PlotElement {
 public:
 
     void setTitle(const std::string &title) { title_ = title ; }
@@ -16,6 +16,7 @@ public:
     virtual BoundingBox getDataBounds() = 0;
     virtual void draw(Canvas &c) = 0;
     virtual void drawLegend(Canvas &c, double width, double height) = 0;
+    virtual bool hasLegend() const { return true ; }
 
 protected:
 

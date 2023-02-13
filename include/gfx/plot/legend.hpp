@@ -6,7 +6,7 @@
 
 namespace gfx {
 class Plot ;
-class Graph ;
+class PlotElement ;
 
 class Legend {
 public:
@@ -19,7 +19,7 @@ protected:
 
     Legend() {}
 
-    void draw(const std::vector<std::unique_ptr<Graph>> &graphs, Canvas &c, double w, double h) ;
+    void draw(const std::vector<std::unique_ptr<PlotElement>> &graphs, Canvas &c, double w, double h) ;
 
 private:
 

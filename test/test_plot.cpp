@@ -4,8 +4,8 @@
 
 #include <gfx/bbox.hpp>
 
-#include <gfx/axis.hpp>
-#include <gfx/line_plot.hpp>
+#include <gfx/plot/axis.hpp>
+#include <gfx/plot/plot.hpp>
 
 #include <cmath>
 
@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
 
     canvas.setTransform(tr);
 
-    LinePlot plot ;
+    Plot plot ;
 
     vector<double> x1 = { 0.0, 0.1, 0.6 } ;
     vector<double> y1 = { 1.0, 3.1, -0.4 } ;
@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
     graph1.setTitle("line 1") ;
     graph1.pen().setLineWidth(2) ;
     graph1.setMarker(new CustomMarker(2)) ;
-    graph1.setErrors(e) ;
+
     graph1.setBrush(new SolidBrush(Color(0.5, 0.2, 0.1, 0.5)));
 
     auto &graph2 = plot.lines(x2, y2, "g+:") ;

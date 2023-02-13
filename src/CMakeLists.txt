@@ -38,13 +38,11 @@ set(LIB_SOURCES
     plot/plot.cpp
     plot/line_plot.cpp
     plot/bar_chart.cpp
+    plot/error_bars.cpp
     plot/axis.cpp
-    plot/tics.cpp
+    plot/ticks.cpp
     plot/legend.cpp
-
     plot/markers.cpp
-    plot/bar_graph.cpp
-
     plot/gtk_widget.cpp
     plot/gtk_widget.hpp
 
@@ -62,13 +60,14 @@ set(LIB_SOURCES
     ${LIBRARY_INCLUDE_DIR}/glyph.hpp
     ${LIBRARY_INCLUDE_DIR}/svg_document.hpp
 
-    ${LIBRARY_INCLUDE_DIR}/plot.hpp
-    ${LIBRARY_INCLUDE_DIR}/axis.hpp
-    ${LIBRARY_INCLUDE_DIR}/tics.hpp
-    ${LIBRARY_INCLUDE_DIR}/legend.hpp
-    ${LIBRARY_INCLUDE_DIR}/graph.hpp
-    ${LIBRARY_INCLUDE_DIR}/line_plot.hpp
-    ${LIBRARY_INCLUDE_DIR}/bar_chart.hpp
+    ${LIBRARY_INCLUDE_DIR}/plot/plot.hpp
+    ${LIBRARY_INCLUDE_DIR}/plot/axis.hpp
+    ${LIBRARY_INCLUDE_DIR}/plot/ticks.hpp
+    ${LIBRARY_INCLUDE_DIR}/plot/legend.hpp
+    ${LIBRARY_INCLUDE_DIR}/plot/plot_element.hpp
+    ${LIBRARY_INCLUDE_DIR}/plot/line_plot.hpp
+    ${LIBRARY_INCLUDE_DIR}/plot/bar_chart.hpp
+    ${LIBRARY_INCLUDE_DIR}/plot/error_bars.hpp
 
 )
 

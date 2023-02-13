@@ -1,11 +1,11 @@
-#include <gfx/legend.hpp>
-#include <gfx/graph.hpp>
+#include <gfx/plot/legend.hpp>
+#include <gfx/plot/plot_element.hpp>
 
 using namespace std ;
 
 namespace gfx {
 
-void Legend::draw(const std::vector<std::unique_ptr<Graph>> &graphs, Canvas &c, double w, double h)
+void Legend::draw(const std::vector<std::unique_ptr<PlotElement>> &graphs, Canvas &c, double w, double h)
 {
     if ( placement_ == None ) return ;
 
@@ -16,6 +16,8 @@ void Legend::draw(const std::vector<std::unique_ptr<Graph>> &graphs, Canvas &c, 
     vector<Text> labels ;
 
     for( size_t i=0 ; i<nGraphs ; i++ ) {
+        if ( !graphs[i]->hasLegend() ) continue ;
+
         Text t ;
         t.setText(graphs[i]->getTitle()) ;
         t.setWrapWidth(max_label_width_) ;
@@ -85,6 +87,8 @@ void Legend::draw(const std::vector<std::unique_ptr<Graph>> &graphs, Canvas &c, 
     c.restore() ;
 
     for( size_t i=0 ; i<nGraphs ; i++ ) {
+        if ( !graphs[i]->hasLegend() ) continue ;
+
         Text &t = labels[i] ;
         double rh = std::max(min_row_height_, t.height()) ;
         c.save() ;
