@@ -19,7 +19,7 @@ void Axis::computeAxisLayout(double ls, double wsize) {
     tic_locations_.clear() ;
 
     ls_ = ls ;
-    unsigned numTics = 2 ;
+    unsigned maxTics = 2 ;
 
     double s = wsize - 2*margin_   ;
     double sep ;
@@ -27,15 +27,14 @@ void Axis::computeAxisLayout(double ls, double wsize) {
     // Compute number of tics for each axis based on the window dimensions
 
     while (1) {
-        sep = (s - ((numTics-1)*ls))/(numTics-1) ;
+        sep = (s - ((maxTics-1)*ls))/(maxTics-1) ;
         if ( sep < label_sep_  ) break ;
-        else numTics ++ ;
+        else maxTics ++ ;
     }
 
     // compute scaling factor of displayed labels
 
     vscale_ = 1.0 ;
-
     power_ = 0 ;
 
     if ( !is_log_ ) {
@@ -43,9 +42,6 @@ void Axis::computeAxisLayout(double ls, double wsize) {
         while ( v * vscale_ <= 0.1 )  { vscale_ *= 10 ; --power_ ; }
         while ( v * vscale_ > 10.0 ) { vscale_ /= 10 ; ++power_ ; }
     }
-
-
-    uint tics = numTics ;
 
     double _max = max_v_, _min = min_v_ ;
 
@@ -58,10 +54,10 @@ void Axis::computeAxisLayout(double ls, double wsize) {
     }
 
 
-    tick_locator_->compute(_min, _max, vscale_, numTics, is_log_ ? 1.0 : 0.0, min_label_v_, max_label_v_, tic_locations_) ;
+    tick_locator_->compute(_min, _max, vscale_, maxTics, is_log_ ? 1.0 : 0.0, min_label_v_, max_label_v_, tic_locations_) ;
 
 
-    numTics = tic_locations_.size() ;
+    size_t numTics = tic_locations_.size() ;
 
     // create labels
 
@@ -69,17 +65,29 @@ void Axis::computeAxisLayout(double ls, double wsize) {
 
     uint i ;
 
+    max_label_width_ = 0 ;
+
     if ( tick_formatter_ ) {
         for( i=0 ; i<numTics ; i++ ) {
             labels_[i].assign(tick_formatter_->format(tic_locations_[i], i)) ;
+            TextLayout layout(labels_[i]) ;
+            layout.setFont(label_font_) ;
+            max_label_width_ = std::max(max_label_width_, layout.width()) ;
         }
+    }
+
+    if ( !title_.empty() ) {
+        TextLayout layout(title_) ;
+        layout.setFont(title_font_);
+        layout.setWrapWidth(title_wrap_);
+        title_height_ = layout.height() ;
     }
 
 
     // compute transformation of this axis from data space to window space
 
     if ( is_reversed_ ) {
-        scale_ = (wsize - 2*margin_ )/(max_label_v_ - min_label_v_)*vscale_ ;
+        scale_ = -(wsize - 2*margin_ )/(max_label_v_ - min_label_v_)*vscale_ ;
         offset_ = -scale_ * max_label_v_ / vscale_  + margin_   ;
     }
     else
@@ -103,7 +111,7 @@ Rectangle2d Axis::paintLabel(Canvas &canvas,  const string &text, double x, doub
         mnt = text ;
     }
 
-    Text layout_mnt(mnt) ;
+    TextLayout layout_mnt(mnt) ;
     layout_mnt.setFont(label_font_) ;
 
     float xoffset = label_font_.size()/8 ; // better to get this from glyph advance
@@ -112,7 +120,7 @@ Rectangle2d Axis::paintLabel(Canvas &canvas,  const string &text, double x, doub
     double lh = layout_mnt.height() ;
     double soffset = 0.66*lh ;
 
-    Text layout_expo;
+    TextLayout layout_expo;
 
     Font superf(label_font_) ;
     superf.setSize(0.58 * label_font_.size()) ;
@@ -152,10 +160,20 @@ Rectangle2d Axis::paintLabel(Canvas &canvas,  const string &text, double x, doub
 
 
 void XAxis::computeLayout(double wsize) {
-    Text layout("-0.09") ;
+    TextLayout layout("-0.09") ;
     layout.setFont(label_font_) ;
     double maxLabelW = std::round(layout.width()) ;
     computeAxisLayout(maxLabelW, wsize) ;
+}
+
+double XAxis::measureHeight(double wh) {
+    TextLayout layout("-0.09") ;
+    layout.setFont(label_font_) ;
+    double maxLabelH = std::round(layout.height()) ;
+
+    double h = tic_size_ + label_offset_ + maxLabelH ;
+    if ( !title_.empty() ) h += title_offset_ + title_height_ ;
+    return h ;
 }
 
 void XAxis::draw(Canvas &canvas, double wsize, double hsize) {
@@ -171,13 +189,15 @@ void XAxis::draw(Canvas &canvas, double wsize, double hsize) {
     canvas.setTextAlign(TextAlignLeft|TextAlignTop) ;
 
     canvas.drawLine(0, 0, wsize, 0) ;
-    canvas.drawLine(0, -hsize, wsize, -hsize) ;
+
+    if ( draw_mirror_line_ )
+        canvas.drawLine(0, -hsize, wsize, -hsize) ;
 
     double lb = 0 ;
 
-    double ticy = ( tics_placement_ == TicsInside ) ? - tic_size_ :  tic_size_  ;
-    double ticy_minor = ( tics_placement_ == TicsInside ) ? - tic_minor_size_  :  tic_minor_size_  ;
-    double labely = ticy + (( tics_placement_ == TicsInside ) ? - label_offset_ :  label_offset_ ) ;
+    double ticy = ( ticks_placement_ == TicsInside ) ? - tic_size_ :  tic_size_  ;
+    double ticy_minor = ( ticks_placement_ == TicsInside ) ? - tic_minor_size_  :  tic_minor_size_  ;
+    double labely = ticy + (( ticks_placement_ == TicsInside ) ? - label_offset_ :  label_offset_ ) ;
 
     // draw tics
 
@@ -243,10 +263,18 @@ void XAxis::draw(Canvas &canvas, double wsize, double hsize) {
 }
 
 void YAxis::computeLayout(double wsize) {
-    Text layout("-0.09") ;
+    TextLayout layout("-0.09") ;
     layout.setFont(label_font_) ;
     double maxLabelH = std::round(layout.height()) ;
     computeAxisLayout(maxLabelH, wsize) ;
+    size_ = tic_size_ + label_offset_ + max_label_width_  ;
+}
+
+double YAxis::measureWidth(double h) {
+    computeLayout(h) ;
+    double w = tic_size_ + label_offset_ + max_label_width_ ;
+    if ( !title_.empty() ) w += title_offset_ + title_height_ ;
+    return w ;
 }
 
 void YAxis::draw(Canvas &canvas, double wsize, double hsize) {
@@ -262,16 +290,16 @@ void YAxis::draw(Canvas &canvas, double wsize, double hsize) {
     canvas.setTextAlign(TextAlignLeft|TextAlignTop) ;
 
     canvas.drawLine(0, 0, 0, -hsize) ;
-    canvas.drawLine(wsize, 0, wsize, -hsize) ;
+    if ( draw_mirror_line_ ) canvas.drawLine(wsize, 0, wsize, -hsize) ;
 
     double lb = 0 ;
 
-    double ticx = ( tics_placement_ == TicsInside ) ?  tic_size_  :  -tic_size_ ;
-    double ticx_minor = ( tics_placement_ == TicsInside ) ?  tic_minor_size_  :  -tic_minor_size_  ;
-    double labelx = ticx + (( tics_placement_ == TicsInside ) ?  label_offset_ :  -label_offset_) ;
+    double ticx = ( ticks_placement_ == TicsInside ) ?  tic_size_  :  -tic_size_ ;
+    double ticx_minor = ( ticks_placement_ == TicsInside ) ?  tic_minor_size_  :  -tic_minor_size_  ;
+    double labelx = ticx + (( ticks_placement_ == TicsInside ) ?  label_offset_ :  -label_offset_) ;
 
     for(  int j=0 ; j<nTics ; j++ ) {
-        double y1 = -j * ts - margin_  ;
+        double y1 = transform(tic_locations_[j]/vscale_);
 
         canvas.drawLine(0, y1, ticx, y1) ;
 
@@ -284,12 +312,12 @@ void YAxis::draw(Canvas &canvas, double wsize, double hsize) {
 
         if ( is_log_ )
         {
-            Rectangle2d r = paintLabel(canvas, "10^" + labels_[j], labelx, y1, 1.0, 0.5) ;
+            Rectangle2d r = paintLabel(canvas, "10^" + labels_[j], labelx, y1, (ticks_placement_ == TicsOutside ) ? 1.0 : 0.0, 0.5) ;
             lb = std::max(lb, r.width()) ;
         }
         else
         {
-            Rectangle2d r = paintLabel(canvas, labels_[j], labelx, y1, 1.0, 0.5);
+            Rectangle2d r = paintLabel(canvas, labels_[j], labelx, y1, (ticks_placement_ == TicsOutside ) ? 1.0 : 0.0, 0.5);
             lb = std::max(lb, r.width()) ;
         }
 
@@ -346,6 +374,8 @@ double XAxis::transform(double x) {
     }
     return scale_ * x + offset_ ;
 }
+
+
 
 double YAxis::transform(double y) {
     if ( is_log_ ) {

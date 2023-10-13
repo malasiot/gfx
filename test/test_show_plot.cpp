@@ -39,11 +39,11 @@ void makeLinePlot(Plot &plot) {
 
 void makeBarChart(Plot &plot) {
 
-    vector<double> v1{1, 2, 0.5} ;
+    vector<double> v1{1e3, 2e3, 0.5e3} ;
     plot.bars(v1, 0.2)
             .setPen(new Pen(NamedColor::brown()))
             .setTitle("Categories") ;
-    plot.bars({1.2, 2.5, 0.8}, v1, 0.2, 0, NamedColor::aqua()).setTitle("Images") ;
+    plot.bars({1.2e3, 2.5e3, 0.8e3}, v1, 0.2, 0, NamedColor::aqua()).setTitle("Images") ;
     plot.errorbars({0, 1, 2}, v1, {{0.1, 0.05, 0.2}}) ;
 
     plot.xAxis().setTicks({0, 1, 2}, {"A", "B", "C"});
@@ -52,16 +52,16 @@ void makeBarChart(Plot &plot) {
 
 int main(int argc, char *argv[]) {
 
-  //  auto plot1 = std::make_shared<Plot>() ;
-  //  makePlot(*plot1, true) ;
+    auto plot1 = std::make_shared<Plot>() ;
+    makeLinePlot(*plot1) ;
 
 
-  auto plot2 = std::make_shared<Plot>() ;
-  makeBarChart(*plot2) ;
+  //auto plot2 = std::make_shared<Plot>() ;
+ // makeBarChart(*plot2) ;
 
   //  std::thread t1(&GUI::, GUI::instance(), plot, "test1") ;
  //   std::thread t2(&GUI::init, GUI::instance()) ;
 
-    plot2->show("test2", true) ;
+    plot1->show("test2", true) ;
 
 }

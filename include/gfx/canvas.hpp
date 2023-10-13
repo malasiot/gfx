@@ -82,10 +82,12 @@ public:
     void drawText(const std::string &textStr, const Point2d &p) ;
     void drawText(const std::string &textStr, const Rectangle2d &r) ;
 
-    void drawText(Text &text, double x0, double y0) ;
-    void drawText(Text &text, double x0, double y0, double width, double height) ;
-    void drawText(Text &text, const Point2d &p) ;
-    void drawText(Text &text, const Rectangle2d &r) ;
+    Rectangle2d textBoundingRect(const std::string &textStr, const Font &f,  float wrapW, TextDirection dir) ;
+
+    void drawText(TextLayout &text, double x0, double y0) ;
+    void drawText(TextLayout &text, double x0, double y0, double width, double height) ;
+    void drawText(TextLayout &text, const Point2d &p) ;
+    void drawText(TextLayout &text, const Rectangle2d &r) ;
 
     void drawGlyph(const Glyph &g, const Point2d &p) ;
     void drawGlyphs(const std::vector<Glyph> &glyphs, const std::vector<Point2d> &positions) ;

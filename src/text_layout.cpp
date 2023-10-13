@@ -7,25 +7,25 @@ using namespace std ;
 
 namespace gfx {
 
-Text::Text()
+TextLayout::TextLayout()
 {
 
 }
 
-Text::Text(Text &&t): needs_update_(t.needs_update_), engine_(std::move(t.engine_)) {}
+TextLayout::TextLayout(TextLayout &&t): needs_update_(t.needs_update_), engine_(std::move(t.engine_)) {}
 
-Text::Text(const std::string &text) {
+TextLayout::TextLayout(const std::string &text) {
     engine_.reset(new TextLayoutEngine(text)) ;
 }
 
-Text::~Text() {}
+TextLayout::~TextLayout() {}
 
-void Text::setText(const string &text)
+void TextLayout::setText(const string &text)
 {
    engine_.reset(new TextLayoutEngine(text)) ;
 }
 
-void Text::setFont(const Font &font)
+void TextLayout::setFont(const Font &font)
 {
     if ( engine_->getFont() != font ) {
         engine_->setFont(font) ;
@@ -33,7 +33,7 @@ void Text::setFont(const Font &font)
     }
 }
 
-void Text::setLineSpacing(double ls)
+void TextLayout::setLineSpacing(double ls)
 {
     if ( engine_->getLineSpacing() != ls ) {
         engine_->setLineSpacing(ls) ;
@@ -42,43 +42,43 @@ void Text::setLineSpacing(double ls)
 
 }
 
-void Text::setWrapWidth(double tw) {
+void TextLayout::setWrapWidth(double tw) {
     if ( engine_->getWrapWidth() != tw ) {
         engine_->setWrapWidth(tw) ;
         needs_update_ = true ;
     }
 }
 
-void Text::setTextDirection(TextDirection dir) {
+void TextLayout::setTextDirection(TextDirection dir) {
     if ( engine_->getTextDirection() != dir ) {
         engine_->setTextDirection(dir) ;
         needs_update_ = true ;
     }
 }
 
-void Text::updateLayout() {
+void TextLayout::updateLayout() {
     if ( needs_update_ ) {
         engine_->run() ;
         needs_update_ = false ;
     }
 }
 
-const std::vector<GlyphRun> &Text::lines() {
+const std::vector<GlyphRun> &TextLayout::lines() {
     updateLayout() ;
     return engine_->lines() ;
 }
 
-double Text::width() {
+double TextLayout::width() {
     updateLayout() ;
     return engine_->width() ;
 }
 
-double Text::height() {
+double TextLayout::height() {
     updateLayout() ;
     return engine_->height() ;
 }
 
-Rectangle2d Text::box(const Rectangle2d &box, uint flags)
+Rectangle2d TextLayout::box(const Rectangle2d &box, uint flags)
 {
     double tx = std::numeric_limits<double>::max(), ty = 0 ;
 

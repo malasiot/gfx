@@ -37,6 +37,11 @@ public:
     double &width() { return width_ ; }
     double &height() { return height_ ; }
 
+    double left() const { return x_ ; }
+    double right() const { return x_ + width_ ; }
+    double top() const { return y_ ; }
+    double bottom() const { return y_ + height_ ; }
+
     double x() const { return x_ ; }
     double y() const { return y_ ; }
     double &x() { return x_ ; }
@@ -59,6 +64,11 @@ public:
         }
     }
 
+    Rectangle2d normalized() const {
+        Rectangle2d r(*this) ;
+        r.normalize();
+        return r ;
+    }
 
 private:
 

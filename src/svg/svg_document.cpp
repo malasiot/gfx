@@ -78,6 +78,8 @@ Image SVGDocument::loadImageResource(const string &uri, svg::Element *container)
         }
 
     }
+
+    return Image() ;
 }
 
 void Canvas::drawSVG(const SVGDocument &doc, double w, double h)

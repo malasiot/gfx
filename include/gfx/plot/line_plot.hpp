@@ -9,7 +9,8 @@ namespace gfx {
 
 class LinePlotElement: public PlotElement {
 public:
-    LinePlotElement(const std::vector<double> &x, const std::vector<double> &y, const char *ps = nullptr) ;
+    LinePlotElement(const std::vector<double> &x, const std::vector<double> &y, const Pen &pen, Marker *marker) ;
+    LinePlotElement(const std::vector<double> &x, const std::vector<double> &y, const char *spec) ;
 
     Pen &pen() { return pen_ ; }
 
@@ -22,9 +23,9 @@ public:
     void draw(Canvas &c) override;
     void drawLegend(Canvas &c, double width, double height) override;
 
-    void parseParamString(const char *ps) ;
-
 private:
+
+    void parseStyleString(const char *src) ;
 
     Pen pen_ = Pen() ;
     std::unique_ptr<Brush> brush_  ;

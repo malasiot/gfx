@@ -361,7 +361,7 @@ void Canvas::setFont(const Font &font) {
     state_.top().font_ = font ;
 }
 
-void Canvas::drawText(Text &layout, double x0, double y0, double width, double height) {
+void Canvas::drawText(TextLayout &layout, double x0, double y0, double width, double height) {
     const detail::State &state = state_.top() ;
 
     const Font &f = state.font_ ;
@@ -457,7 +457,7 @@ void Canvas::drawText(Text &layout, double x0, double y0, double width, double h
 }
 
 void Canvas::drawText(const std::string &text, double x0, double y0, double width, double height) {
-    Text layout(text) ;
+    TextLayout layout(text) ;
 
     const detail::State &state = state_.top() ;
 
@@ -478,15 +478,25 @@ void Canvas::drawText(const string &textStr, const Rectangle2d &r) {
     drawText(textStr, r.x(), r.y(), r.width(), r.height()) ;
 }
 
-void Canvas::drawText(Text &text, const Point2d &p) {
+Rectangle2d Canvas::textBoundingRect(const std::string &text, const Font &f, float wrapW, TextDirection dir) {
+    TextLayout layout(text) ;
+
+    layout.setFont(f) ;
+    layout.setWrapWidth(wrapW) ;
+    layout.setTextDirection(dir) ;
+
+    return {0, 0, layout.width(), layout.height()} ;
+}
+
+void Canvas::drawText(TextLayout &text, const Point2d &p) {
     drawText(text, p.x(), p.y()) ;
 }
 
-void Canvas::drawText(Text &text, const Rectangle2d &r) {
+void Canvas::drawText(TextLayout &text, const Rectangle2d &r) {
     drawText(text, r.x(), r.y(), r.width(), r.height()) ;
 }
 
-void Canvas::drawText(Text &text, double x0, double y0)
+void Canvas::drawText(TextLayout &text, double x0, double y0)
 {
     const detail::State &state = state_.top() ;
 
@@ -537,7 +547,7 @@ void Canvas::drawText(Text &text, double x0, double y0)
 }
 
 void Canvas::drawText(const std::string &text, double x0, double y0) {
-    Text layout(text) ;
+    TextLayout layout(text) ;
     const detail::State &state = state_.top() ;
 
     const Font &f = state.font_ ;
@@ -794,7 +804,7 @@ void Canvas::drawImage(const Image &im,  double opacity ) {
     cairo_set_source_surface(cr(), (cairo_surface_t *)imsurf, 0, 0);
 
     cairo_pattern_set_filter (cairo_get_source (cr()), CAIRO_FILTER_BILINEAR);
-    cairo_pattern_set_extend( cairo_get_source( cr()), CAIRO_EXTEND_PAD ) ;
+    cairo_pattern_set_extend( cairo_get_source( cr()), CAIRO_EXTEND_NONE ) ;
 
     cairo_paint_with_alpha (cr(), opacity);
 

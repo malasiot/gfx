@@ -17,6 +17,7 @@ public:
 
     Pen( const Color &clr = Color(0, 0, 0), double line_width = 1.0, LineStyle style = SolidLine ) ;
 
+
     Pen &setColor(const Color &brush) ;
     Pen &setLineWidth(double width) ;
     Pen &setMiterLimit(double limit) ;

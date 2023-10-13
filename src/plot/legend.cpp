@@ -13,12 +13,12 @@ void Legend::draw(const std::vector<std::unique_ptr<PlotElement>> &graphs, Canva
 
     double lw = 0, lh = 0, ox, oy ;
 
-    vector<Text> labels ;
+    vector<TextLayout> labels ;
 
     for( size_t i=0 ; i<nGraphs ; i++ ) {
         if ( !graphs[i]->hasLegend() ) continue ;
 
-        Text t ;
+        TextLayout t ;
         t.setText(graphs[i]->getTitle()) ;
         t.setWrapWidth(max_label_width_) ;
         t.setFont(label_font_) ;
@@ -89,7 +89,7 @@ void Legend::draw(const std::vector<std::unique_ptr<PlotElement>> &graphs, Canva
     for( size_t i=0 ; i<nGraphs ; i++ ) {
         if ( !graphs[i]->hasLegend() ) continue ;
 
-        Text &t = labels[i] ;
+        TextLayout &t = labels[i] ;
         double rh = std::max(min_row_height_, t.height()) ;
         c.save() ;
         c.setTransform(Matrix2d().translate(ox, oy)) ;

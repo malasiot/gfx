@@ -12,7 +12,7 @@ namespace gfx {
 class Axis {
 public:
 
-    enum TicsPlacement { TicsInside, TicsOutside } ;
+    enum TicksPlacement { TicsInside, TicsOutside } ;
 
     Axis() {
         grid_pen_.setLineWidth(0.2) ;
@@ -29,19 +29,32 @@ public:
     Axis &setLogarithmic(bool loga) { is_log_ = loga ; return *this ; }
     Axis &setGrid(bool grid) { draw_grid_ = grid ; return *this ; }
     Axis &setTickLocator(TickLocator *loc) { tick_locator_.reset(loc) ; return *this ;}
+    Axis &setTicksPlacement(TicksPlacement tp) {
+        ticks_placement_ = tp ;
+        return *this ;
+    }
 
     Axis &setLabelSeparation(double s) { label_sep_ = s ; return *this ; }
     Axis &setLabelFont(const Font &f) { label_font_ = f ; return *this ; }
     Axis &setLabelOffset(double o) { label_offset_ = 0 ; return *this ; }
 
     Axis &setMargin(double v) { margin_ = v ; return *this ; }
+    Axis &setDrawMirrorLine(bool v) { draw_mirror_line_ = v ; return *this ; }
 
     double getScale() const { return scale_ ; }
     double getOffset() const { return offset_ ; }
     bool isLogarithmic() const { return is_log_ ; }
+    bool isReversed() const { return is_reversed_ ; }
 
     // set fixed ticks
     Axis &setTicks(const std::vector<double> &loc, const std::vector<std::string> &labels) ;
+
+    Axis &setReversed(bool rev) {
+        is_reversed_ = rev ;
+        return *this ;
+    }
+
+    double size() const { return size_ ; }
 
 protected:
 
@@ -58,17 +71,19 @@ protected:
     double label_sep_ = 20 ;
     bool is_log_ = false ;
     bool is_reversed_ = false ;
+    bool draw_mirror_line_ = true ;
     double tic_size_ = 5 ;
     double tic_minor_size_ = 3 ;
     double label_offset_ = 5 ;
     double title_offset_ = 5 ;
     double title_wrap_ = 100 ;
     bool draw_grid_ = false ;
+    double size_, max_label_width_, title_height_ ;
     std::string title_ ;
     std::unique_ptr<TickFormatter> tick_formatter_ = std::unique_ptr<TickFormatter>(new ScalarTickFormatter()) ;
     std::unique_ptr<TickLocator> tick_locator_ = std::unique_ptr<TickLocator>(new AutoTickLocator()) ;
 
-    TicsPlacement tics_placement_ = TicsOutside ;
+    TicksPlacement ticks_placement_ = TicsOutside ;
 
     Font label_font_ = Font("Arial", 14) ;
     Font title_font_ = Font("Arial", 16) ;
@@ -98,6 +113,8 @@ public:
     // from data coordinates to device coordinates
     double transform(double x) ;
 
+    double measureHeight(double wh) ;
+
 };
 
 class YAxis: public Axis {
@@ -108,6 +125,8 @@ public:
 
     // from data coordinates to device coordinates
     double transform(double x) ;
+
+    double measureWidth(double height_hint) ;
 };
 
 }

@@ -6,10 +6,17 @@ using namespace std ;
 
 namespace gfx {
 
-LinePlotElement::LinePlotElement(const vector<double> &x, const vector<double> &y, const char *ps): x_(x), y_(y) {
+LinePlotElement::LinePlotElement(const vector<double> &x, const vector<double> &y, const Pen &pen, Marker *marker): x_(x), y_(y), pen_(pen),
+    marker_(marker) {
     assert(x.size() == y.size()) ;
-    if ( ps != nullptr ) parseParamString(ps) ;
+
 }
+
+LinePlotElement::LinePlotElement(const vector<double> &x, const vector<double> &y, const char *spec): x_(x), y_(y) {
+    assert(x.size() == y.size()) ;
+    parseStyleString(spec);
+}
+
 
 BoundingBox LinePlotElement::getDataBounds() {
     double minx = numeric_limits<double>::max(),
@@ -60,6 +67,7 @@ void LinePlotElement::draw(Canvas &c)
         c.restore() ;
 
     }
+
 
     Path p ;
 
@@ -116,7 +124,7 @@ void LinePlotElement::drawLegend(Canvas &c, double width, double height)
     }
 }
 
-void LinePlotElement::parseParamString(const char *src) {
+void LinePlotElement::parseStyleString(const char *src) {
 
     const char *c = src ;
     int markerChar = -1 ;
@@ -166,7 +174,7 @@ void LinePlotElement::parseParamString(const char *src) {
     default:   shape = SimpleShapeMarker::None ; break ;
     }
 
-    setMarker(new SimpleShapeMarker(shape, 6, nullptr, new SolidBrush(NamedColor::white()))) ;
+    setMarker(new SimpleShapeMarker(shape, 6, new Pen(clr), new SolidBrush(clr))) ;
 
     pen_.setColor(clr) ;
 

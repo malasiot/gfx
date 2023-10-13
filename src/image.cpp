@@ -137,7 +137,7 @@ bool Image::png_write(W &writer) {
 
     for (int row = 0; row < height_; row++, p += stride_ ) {
         if ( format_ == ImageFormat::ARGB32 ) {
-            png_bytep data = new png_byte [width_ * 4], dst = data ;
+            png_bytep data = new png_byte [stride_], dst = data ;
             unsigned char *src = (unsigned char *)p ;
             for( int col = 0 ; col < width_ ; col++, src += 4 ) {
                 *dst++ = src[2] ;

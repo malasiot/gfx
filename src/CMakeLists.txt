@@ -39,10 +39,13 @@ set(LIB_SOURCES
     plot/line_plot.cpp
     plot/bar_chart.cpp
     plot/error_bars.cpp
+    plot/raster_plot.cpp
     plot/axis.cpp
     plot/ticks.cpp
     plot/legend.cpp
     plot/markers.cpp
+    plot/colormap.cpp
+    plot/color_ramp.cpp
     plot/gtk_widget.cpp
     plot/gtk_widget.hpp
 
@@ -68,6 +71,7 @@ set(LIB_SOURCES
     ${LIBRARY_INCLUDE_DIR}/plot/line_plot.hpp
     ${LIBRARY_INCLUDE_DIR}/plot/bar_chart.hpp
     ${LIBRARY_INCLUDE_DIR}/plot/error_bars.hpp
+    ${LIBRARY_INCLUDE_DIR}/plot/raster_plot.hpp
 
 )
 
@@ -93,6 +97,7 @@ include_directories(
 )
 
 target_link_libraries(gfx
+    PRIVATE
     ${CAIRO_LIBRARIES}
     ${HARFBUZZ_LIBRARIES}
     ${FONTCONFIG_LIBRARIES}
@@ -100,7 +105,7 @@ target_link_libraries(gfx
     ${ICU_LIBRARIES}
     ${QT_LIBRARIES}
     ${GTKMM_LIBRARIES}
-    fmt::fmt
+    fmt::fmt-header-only
 )
 
 # Install library

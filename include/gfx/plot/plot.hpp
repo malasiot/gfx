@@ -8,6 +8,8 @@
 #include <gfx/plot/line_plot.hpp>
 #include <gfx/plot/bar_chart.hpp>
 #include <gfx/plot/error_bars.hpp>
+#include <gfx/plot/raster_plot.hpp>
+#include <gfx/plot/color_ramp.hpp>
 
 namespace gfx {
 
@@ -23,7 +25,18 @@ public:
         return *this ;
     }
 
-    LinePlotElement &lines(const std::vector<double> &x, const std::vector<double> &y, const char *style = nullptr);
+    Plot &setAspect(double v) {
+        aspect_ = v ;
+        return *this ;
+    }
+
+    Plot &setPadding(double v) {
+        pad_ = v ;
+        return *this ;
+    }
+
+    LinePlotElement &lines(const std::vector<double> &x, const std::vector<double> &y, const Pen &p, Marker *marker = nullptr);
+    LinePlotElement &lines(const std::vector<double> &x, const std::vector<double> &y, const char *spec);
 
     BarChartElement &bars(const std::vector<double> &top, double width, double offset = 0.0, const Color &clr = NamedColor::blue()) ;
     BarChartElement &bars(const std::vector<double> &top, const std::vector<double> &bottom, double width, double offset = 0.0, const Color &clr = NamedColor::blue()) ;
@@ -32,6 +45,11 @@ public:
                          const std::vector<double> &y,
                          const std::vector<double> &e
                          );
+
+    RasterElement &raster(const std::vector<double> &data, size_t rows, size_t cols) ;
+    RasterElement &raster(const std::vector<double> &data, size_t rows, size_t cols, const BoundingBox &ext) ;
+
+    ColorRamp &addColorRamp(ColorMap *cmap, double vmin, double vmax) ;
 
     XAxis &xAxis() { return x_axis_ ; }
     YAxis &yAxis() { return y_axis_ ; }
@@ -50,6 +68,8 @@ private:
     XAxis x_axis_ ;
     YAxis y_axis_ ;
     std::string title_ ;
+    double pad_ = 4 ;
+    std::optional<double> aspect_ ;
 
     Legend legend_ ;
 
@@ -58,6 +78,7 @@ private:
     Font title_font_ = Font("Arial", 14);
 
     std::vector<std::unique_ptr<PlotElement>> graphs_ ;
+    std::unique_ptr<ColorRamp> color_ramp_ ;
     BoundingBox data_bounds_ ;
 
 private:

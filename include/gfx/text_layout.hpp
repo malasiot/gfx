@@ -27,12 +27,12 @@ class GlyphRun ;
 // The Text object can be used to cache text layout for repeated text drawing
 // It can be also used to measure the string bounding box
 
-class Text {
+class TextLayout {
 public:
-    Text()  ;
-    Text(Text &&t) ;
-    Text(const std::string &text) ;
-    ~Text() ;
+    TextLayout()  ;
+    TextLayout(TextLayout &&t) ;
+    TextLayout(const std::string &text) ;
+    ~TextLayout() ;
 
 
 public:
@@ -62,8 +62,6 @@ public:
     const std::vector<GlyphRun> &lines() ;
 
 private:
-
-
 
     bool needs_update_ = true ;
 
